@@ -1,0 +1,25 @@
+I recommend going through the C++ Primer resources about smart pointers. It's a lot but the most detailed and comprehensive. If you want to use smart pointers, you should probably have a good understanding of how they work, or else I would advise against using any smart pointers in your code, and just use raw pointers for memory management.
+
+Lastly, shared_ptr generally implicates a multi-ownership or "has-a" relationship, so I use shared_ptr when I want to pass the pointer to other objects. unique_ptr generally implicates a sole ownership or "owns-a" relationship, so I only use unique_ptr when I know the object won't be passed around.
+
+
+1. C++ Primer (already pushed to the github repo): Pg. 450-454, Pg. 464-466, Pg. 469, Pg. 470-471, Pg. 630-631 (all inclusive)
+
+450-454 goes over the basics of using shared_ptr;
+
+464-466 goes over using "new" with shared_ptr;
+
+469 contains some guildlines to using smart pointers (The "Caution: Smart Pointer Pitfall" part);
+
+470-471 goes over the basics of unique_ptr;
+
+630-631 mentions that polymorphism also works smart pointers, that is, you can convert a smart pointer to child (derived) type to a smart pointer to parent (base-class) type (The "Put (Smart) Pointers, Not Objects, in Containers" part)
+
+
+2. https://www.geeksforgeeks.org/auto_ptr-unique_ptr-shared_ptr-weak_ptr-in-cpp/
+
+Some extra examples and semantic uses of smart pointers. auto_ptr has been deprecated and weak_ptr is less used. So looking at just shared_ptr and unique_ptr should be enough. (P.S. weak_ptr seems to solve a "circular dependency" problem with shared_ptr, it may be useful to know)
+
+3. https://www.linkedin.com/advice/0/what-benefits-drawbacks-using-uniqueptr-c-skills-a
+
+Goes over some simple semantics and uses of smart pointers but contains no examples. 
