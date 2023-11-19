@@ -1,0 +1,31 @@
+- test legal moves for each non-pawn chess piece
+
+- test captures for each chess piece (if possible)
+
+- test detection for check and checkmates
+
+- test pawn legal moves and captures (pawn's first move, diagonal capture, en passant, pawn promotion)
+
+- test castling
+
+- test legal (basically in-check positions) moves that put King in check
+
+- test stalemate 
+
+- test for board redisplay (text and graphics) after each move
+
+- test for check messages (e.g. White is in check.)
+
+- test for win messages (e.g. Checkmate! White wins!)
+
+- test for stalemate messages (e.g. Stalemate!)
+
+- test for resign messages (e.g. White wins!)
+
+- test computer move behaviour for each level of difficulty
+
+- test each command for command interpreter 
+
+- test for invalid input
+
+- test for final score message 
