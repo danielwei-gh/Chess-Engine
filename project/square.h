@@ -14,7 +14,7 @@ public:
     int getRow() const;
     int getColumn() const;
     
-    // returns the piece replaced, if no piece exists, returns nullptr
+    // returns the piece replaced, if no piece exists, returns null shared_ptr
     std::shared_ptr<Piece> setPiece(std::shared_ptr<Piece> newPiece);
     std::shared_ptr<Piece> getPiece(); // might need const
     virtual void notify() override;

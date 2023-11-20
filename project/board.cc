@@ -37,6 +37,26 @@ void Board::initBoard() {
         board[6][i].setPiece(std::make_shared<Pawn>(Colour::White));
 }
 
+std::shared_ptr<Piece> Board::placePiece(int row, int col, Colour c, PieceType p) {
+    // perhaps factory method would have been better, but this works for now
+    if (p == PieceType::King)
+        return board[row][col].setPiece(std::make_shared<King>(c));
+    else if (p == PieceType::Queen)
+        return board[row][col].setPiece(std::make_shared<Queen>(c));
+    else if (p == PieceType::Bishop)
+        return board[row][col].setPiece(std::make_shared<Bishop>(c));
+    else if (p == PieceType::Rook)
+        return board[row][col].setPiece(std::make_shared<Rook>(c));
+    else if (p == PieceType::Knight)
+        return board[row][col].setPiece(std::make_shared<Knight>(c));
+    else
+        return board[row][col].setPiece(std::make_shared<Pawn>(c));
+}
+
+std::shared_ptr<Piece> Board::removePiece(int row, int col) {
+    return board[row][col].setPiece(std::shared_ptr<Piece>{});
+}
+
 std::ostream &operator<<(std::ostream &out, Board &b) {
     out << *b.display;
     return out;
