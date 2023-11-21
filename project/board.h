@@ -9,18 +9,22 @@ class Board {
     std::vector<std::vector<Square>> board;
     std::shared_ptr<BoardDisplay> display;
 
-    // set of all white pieces on the board
-    std::set<std::shared_ptr<Piece>> whitePieces;
+    // set of pairs which represent the position (row, column) 
+    //  of all white pieces on the board
+    std::set<std::pair<int, int>> whitePieces;
 
-    // set of all black pieces on the board
-    std::set<std::shared_ptr<Piece>> blackPieces;
+    // set of pairs which represent the position (row, column) 
+    //  of all black pieces on the board
+    std::set<std::pair<int, int>> blackPieces;
 
-    void addToPieces(std::shared_ptr<Piece>);
+    void insertToPieces(std::pair<int, int> pos, Colour c);
 
-    void removeFromPieces(std::shared_ptr<Piece>);
+    void eraseFromPieces(std::pair<int, int> pos, Colour c);
 public:
     // initializes the board with squares that have no pieces
     explicit Board(int size);
+
+    Square &getSquare(int row, int col);
 
     // places all needed pieces for a default chess game 
     void initBoard();

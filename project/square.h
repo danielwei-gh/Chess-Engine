@@ -14,9 +14,13 @@ public:
     int getRow() const;
     int getColumn() const;
     
-    // returns the piece replaced, if no piece exists, returns null shared_ptr
+    // returns a shared_ptr to the piece replaced, if no piece exists, 
+    //  returns a null shared_ptr
     std::shared_ptr<Piece> setPiece(std::shared_ptr<Piece> newPiece);
-    std::shared_ptr<Piece> getPiece(); // might need const
+
+    // returns a shared_ptr to the piece on this Square, if no piece exists,
+    //  returns a null shared_ptr
+    std::shared_ptr<Piece> getPiece();
     virtual void notify() override;
 };
 

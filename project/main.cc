@@ -7,10 +7,10 @@ int main() {
     cout << endl;
     board.initBoard();
     cout << board << endl;
-    // cout << endl;
-    // board.placePiece(3, 1, Colour::Black, PieceType::Bishop);
-    // cout << board << endl;
-    // cout << endl;
+    cout << endl;
+    board.placePiece(3, 1, Colour::Black, PieceType::Bishop);
+    cout << board << endl;
+    cout << endl;
     // board.removePiece(0, 0);
     // cout << board << endl;
     // cout << endl;

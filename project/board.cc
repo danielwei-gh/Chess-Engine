@@ -1,5 +1,19 @@
 #include "board.h"
 
+void Board::insertToPieces(std::pair<int, int> pos, Colour c) {
+    if (c == Colour::White)
+        whitePieces.insert(pos);
+    else
+        blackPieces.insert(pos);
+}
+
+void Board::eraseFromPieces(std::pair<int, int> pos, Colour c) {
+    if (c == Colour::White)
+        whitePieces.erase(pos);
+    else
+        blackPieces.erase(pos);
+}
+
 Board::Board(int size): boardSize{size}, display{new BoardDisplay{size}} {
     for (int i = 0; i < boardSize; ++i) {
         board.emplace_back(std::vector<Square>{});
@@ -9,6 +23,10 @@ Board::Board(int size): boardSize{size}, display{new BoardDisplay{size}} {
             board[i][j].attach(display);
         }
     }
+}
+
+Square& Board::getSquare(int row, int col) {
+    return board[row][col];
 }
 
 void Board::initBoard() {
@@ -21,9 +39,15 @@ void Board::initBoard() {
     board[0][5].setPiece(std::make_shared<Bishop>(Colour::Black));
     board[0][6].setPiece(std::make_shared<Knight>(Colour::Black));
     board[0][7].setPiece(std::make_shared<Rook>(Colour::Black));
-    for (int i = 0; i < boardSize; ++i)
+    for (int i = 0; i < boardSize; ++i) {
         board[1][i].setPiece(std::make_shared<Pawn>(Colour::Black));
-    
+
+        // inserts all positions of black pieces into blackPieces
+        insertToPieces({0, i}, Colour::Black);
+        insertToPieces({1, i}, Colour::Black);
+    }
+    std::cout << "Black Pieces: " << blackPieces.size() << std::endl; 
+
     // initializes all white pieces
     board[7][0].setPiece(std::make_shared<Rook>(Colour::White));
     board[7][1].setPiece(std::make_shared<Knight>(Colour::White));
@@ -33,11 +57,24 @@ void Board::initBoard() {
     board[7][5].setPiece(std::make_shared<Bishop>(Colour::White));
     board[7][6].setPiece(std::make_shared<Knight>(Colour::White));
     board[7][7].setPiece(std::make_shared<Rook>(Colour::White));
-    for (int i = 0; i < boardSize; ++i)
+    for (int i = 0; i < boardSize; ++i) {
         board[6][i].setPiece(std::make_shared<Pawn>(Colour::White));
+
+        // inserts all positions of white pieces into whitePieces
+        insertToPieces({6, i}, Colour::White);
+        insertToPieces({7, i}, Colour::White);
+    }
+    std::cout << "White Pieces: " << whitePieces.size() << std::endl;
 }
 
 std::shared_ptr<Piece> Board::placePiece(int row, int col, Colour c, PieceType p) {
+    // inserts the position of the new piece into one of the sets
+    insertToPieces({row, col}, c);
+    if (c == Colour::White)
+        std::cout << "White Pieces: " << whitePieces.size() << std::endl;
+    else
+        std::cout << "Black Pieces: " << blackPieces.size() << std::endl; 
+
     // perhaps factory method would have been better, but this works for now
     if (p == PieceType::King)
         return board[row][col].setPiece(std::make_shared<King>(c));
@@ -54,6 +91,11 @@ std::shared_ptr<Piece> Board::placePiece(int row, int col, Colour c, PieceType p
 }
 
 std::shared_ptr<Piece> Board::removePiece(int row, int col) {
+    std::shared_ptr<Piece> piece = board[row][col].getPiece();
+    if (piece) // erases the position if piece is not null
+        eraseFromPieces({row, col}, piece->getColour());
+    std::cout << "White Pieces: " << whitePieces.size() << std::endl;
+    std::cout << "Black Pieces: " << blackPieces.size() << std::endl;
     return board[row][col].setPiece(std::shared_ptr<Piece>{});
 }
 
