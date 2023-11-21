@@ -17,13 +17,26 @@ class Board {
     //  of all black pieces on the board
     std::set<std::pair<int, int>> blackPieces;
 
-    void insertToPieces(std::pair<int, int> pos, Colour c);
+    // the position of the White King on the board if there is one,
+    //  otherwise the position is (-1, -1)
+    std::pair<int, int> whiteKingPos;
 
-    void eraseFromPieces(std::pair<int, int> pos, Colour c);
+    // the position of the Black King on the board if there is one,
+    //  otherwise the position is (-1, -1)
+    std::pair<int, int> blackKingPos;
+
+    // inserts the pair (row, col) which represents the position of a piece
+    //  with Colour c into one of the sets
+    void insertToPieces(int row, int col, Colour c);
+
+    // erases the pair (row, col) which represents the position of a piece
+    //  with Colour c from one of the sets
+    void eraseFromPieces(int row, int col, Colour c);
 public:
     // initializes the board with squares that have no pieces
     explicit Board(int size);
 
+    // returns a reference to the Square with position (row, col)
     Square &getSquare(int row, int col);
 
     // places all needed pieces for a default chess game 
@@ -38,7 +51,17 @@ public:
     //  that was removed, otherwise returns a null shared_ptr
     std::shared_ptr<Piece> removePiece(int row, int col);
 
-    // outputs the board
+    // returns a reference to whitePieces
+    const std::set<std::pair<int, int>> &getWhitePieces() const;
+
+    // returns a reference to blackPieces
+    const std::set<std::pair<int, int>> &getBlackPieces() const;
+
+    const std::pair<int, int> &getWhiteKingPos() const;
+
+    const std::pair<int, int> &getBlackKingPos() const;
+
+    // forwards the output of the board from BoardDisplay
     friend std::ostream &operator<<(std::ostream &out, Board &b);
 };
 
