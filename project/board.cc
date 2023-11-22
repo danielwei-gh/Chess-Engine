@@ -69,6 +69,10 @@ void Board::initBoard() {
 }
 
 std::shared_ptr<Piece> Board::placePiece(int row, int col, Colour c, PieceType p) {
+    if (whiteKingPos.first == row && whiteKingPos.second == col)
+        whiteKingPos = {-1, -1};
+    else if (blackKingPos.first == row && blackKingPos.second == col)
+        blackKingPos = {-1, -1};
     // inserts the position of the new piece into one of the sets
     insertToPieces(row, col, c);
 
@@ -113,6 +117,14 @@ const std::set<std::pair<int, int>>& Board::getWhitePieces() const {
 
 const std::set<std::pair<int, int>>& Board::getBlackPieces() const {
     return blackPieces;
+}
+
+const std::pair<int, int>& Board::getWhiteKingPos() const {
+    return whiteKingPos;
+}
+
+const std::pair<int, int>& Board::getBlackKingPos() const {
+    return blackKingPos;
 }
 
 std::ostream &operator<<(std::ostream &out, Board &b) {

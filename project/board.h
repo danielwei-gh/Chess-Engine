@@ -57,8 +57,10 @@ public:
     // returns a reference to blackPieces
     const std::set<std::pair<int, int>> &getBlackPieces() const;
 
+    // returns a reference to whiteKingPos
     const std::pair<int, int> &getWhiteKingPos() const;
 
+    // returns a reference to blackKingPos
     const std::pair<int, int> &getBlackKingPos() const;
 
     // forwards the output of the board from BoardDisplay
