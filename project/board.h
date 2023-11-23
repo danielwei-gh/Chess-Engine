@@ -36,6 +36,9 @@ public:
     // initializes the board with squares that have no pieces
     explicit Board(int size);
 
+    // returns the board size
+    int getSize() const;
+
     // returns a reference to the Square with position (row, col)
     Square &getSquare(int row, int col);
 

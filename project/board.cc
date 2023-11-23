@@ -26,6 +26,10 @@ whiteKingPos{-1, -1}, blackKingPos{-1, -1} {
     }
 }
 
+int Board::getSize() const {
+    return boardSize;
+}
+
 Square& Board::getSquare(int row, int col) {
     return board[row][col];
 }

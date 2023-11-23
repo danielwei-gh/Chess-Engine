@@ -22,7 +22,7 @@ std::shared_ptr<Piece> Square::setPiece(std::shared_ptr<Piece> newPiece) {
     return tmp;
 }
 
-std::shared_ptr<Piece> Square::getPiece() {
+std::shared_ptr<Piece> Square::getPiece() const {
     return piece;
 }
 

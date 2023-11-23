@@ -20,7 +20,8 @@ public:
 
     // returns a shared_ptr to the piece on this Square, if no piece exists,
     //  returns a null shared_ptr
-    std::shared_ptr<Piece> getPiece();
+    std::shared_ptr<Piece> getPiece() const;
+
     virtual void notify() override;
 };
 

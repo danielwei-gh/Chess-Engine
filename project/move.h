@@ -12,7 +12,7 @@ class Move {
     std::shared_ptr<Piece> capturedPiece;
 
      // Square to which the captured piece is after the move if there is one,
-     // otherwise capturedSquare is the same as endSquare
+     // otherwise capturedSquare is the same as endSquare (used for en passant)
     Square &capturedSquare;
 public:
     Move(std::shared_ptr<Piece> p1, Square &start, Square &end,
