@@ -1,37 +1,57 @@
 #ifndef __MOVE_H__
 #define __MOVE_H__
-#include "square.h"
+#include "piece.h"
+#include <memory>
 
-class Move {
-    std::shared_ptr<Piece> movedPiece; // shared_ptr to the moved piece
-    Square &startSquare; // Square to which the moved piece was before the move
-    Square &endSquare; // Square to which the moved piece is after the move
+struct Move {
+    // shared_ptr that points to the moved piece (if castling occured, 
+    //  movedPiece would point to the castled King)
+    const std::shared_ptr<Piece> movedPiece;
 
-    // shared_ptr to the captured piece if there is one,
-    //  otherwise capturedPiece is a null shared_ptr
-    std::shared_ptr<Piece> capturedPiece;
+    // pair that represents the row and column of the Square to which
+    //  the moved piece was before the move (if castling occured, startPos
+    //  represents the row and column of the Square to which the castled King
+    //  was before the castle)
+    std::pair<int, int> startPos;
 
-     // Square to which the captured piece is after the move if there is one,
-     // otherwise capturedSquare is the same as endSquare (used for en passant)
-    Square &capturedSquare;
-public:
-    Move(std::shared_ptr<Piece> p1, Square &start, Square &end,
-         std::shared_ptr<Piece> p2, Square &captured);
-    
-    // returns a shared_ptr to movedPiece
-    std::shared_ptr<Piece> getMovedPiece() const;
+    // pair that represents the row and column of the Square to which
+    //  the moved piece was after the move (if castling occured, startPos
+    //  represents the row and column of the Square to which the castled King
+    //  was after the castle)
+    std::pair<int, int> endPos;
 
-    // returns a reference to startSquare
-    Square &getStartSquare() const;
+    // shared_ptr that points to the captured piece if there is one, otherwise
+    //  capturedPiece is nullptr
+    const std::shared_ptr<Piece> capturedPiece;
 
-    // returns a reference to endSquare
-    Square &getEndSquare() const;
+    // pair that represents the row and column of the Square to which
+    //  the captured Pawn was before the enPassant if enPassant occured,
+    //  otherwise enPassantPos is (-1, -1)
+    std::pair<int, int> enPassantPos;
 
-    // returns a shared_ptr to capturedPiece
-    std::shared_ptr<Piece> getCapturedPiece() const;
+    // shared_ptr that points the to the castled Rook if castling occured, 
+    //  otherwise castledRook is nullptr
+    const std::shared_ptr<Piece> castledRook;
 
-    // returns a reference to capturedSquare
-    Square &getCapturedSquare() const;
+    // pair that represents the row and column of the Square to which
+    //  the castled Rook was before the castling if castling occured,
+    //  otherwise rookStartPos is (-1, -1)
+    std::pair<int, int> rookStartPos;
+
+    // pair that represents the row and column of the Square to which
+    //  the castled Rook was after the castling if castling occured,
+    //  otherwise rookStartPos is (-1, -1)
+    std::pair<int, int> rookEndPos;
+
+    // constructor for Move
+    Move(const std::shared_ptr<Piece> movedPiece, 
+        const std::pair<int, int> &startPos, 
+        const std::pair<int, int> &endPos,
+        const std::shared_ptr<Piece> capturedPiece = nullptr,
+        const std::pair<int, int> &enPassantPos = {-1, -1},
+        const std::shared_ptr<Piece> castledRook = nullptr,
+        const std::pair<int, int> &rookStartPos = {-1, -1},
+        const std::pair<int, int> &rookEndPos = {-1, -1});
 };
 
 #endif
