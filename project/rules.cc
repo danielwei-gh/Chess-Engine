@@ -116,7 +116,7 @@ void Rules::isAttackSquare(int row, int col, Board &board,
     }
 }
 
-bool Rules::isKingMove(const std::pair<int, int> &start, 
+/*bool Rules::isKingMove(const std::pair<int, int> &start, 
     const std::pair<int, int> &end, Board &board)
 {
     int startRow = start.first, startCol = start.second;
@@ -290,6 +290,7 @@ bool Rules::isPawnMove(const std::pair<int, int> &start,
     }
 }
 
+*/
 std::vector<std::pair<int, int>> 
 Rules::allAttackingSquares(const std::pair<int, int> &pos, Board &board, 
     const Move &previousMove) 
