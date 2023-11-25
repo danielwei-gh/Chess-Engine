@@ -1,6 +1,6 @@
 #include "rules.h"
 
-bool Rules::isStraightMove(const std::pair<int, int> &start, 
+/*bool Rules::isStraightMove(const std::pair<int, int> &start, 
     const std::pair<int, int> &end, Board &board)
 {
     int startRow = start.first, startCol = start.second;
@@ -101,19 +101,125 @@ bool Rules::isDiagonalMove(const std::pair<int, int> &start,
     
     return true;
 }
+*/
 
 bool Rules::isValidPos(int row, int col, Board &board) {
     return 0 <= row && row < board.getSize() && 0 <= col && col < board.getSize();
 }
 
-void Rules::isAttackSquare(int row, int col, Board &board, 
-    std::shared_ptr<Piece> &piece, std::vector<std::pair<int, int>> &squares)
+bool Rules::isPseudoLegalMove(const std::pair<int, int> &start, 
+    const std::pair<int, int> &end, Board &board, 
+    std::shared_ptr<Piece> &movedPiece, std::vector<Move> &moves)
 {
-    if (isValidPos(row, col, board)) {
-        auto capturePiece = board.getSquare(row, col).getPiece();
-        if (!capturePiece || capturePiece->getColour() != piece->getColour())
-            squares.emplace_back(row, col);
+    // if end is a valid square position on the board
+    if (isValidPos(end.first, end.second, board)) {
+        auto capturedPiece = board.getSquare(end.first, end.second).getPiece();
+
+        // if there is no piece on the square with position end, adds to Move
+        //  and return true
+        if (!capturedPiece) {
+            moves.emplace_back(movedPiece, start, end, capturedPiece);
+            return true;
+        }
+
+        // if the piece on the square with position end has a different colour
+        //  than movedPiece, adds to Move and return false
+        if (capturedPiece->getColour() != movedPiece->getColour()) {
+            moves.emplace_back(movedPiece, start, end, capturedPiece);
+            return false;
+        }
+
+        // otherwise the the piece on the square with position end has the same
+        //  colour as movedPiece, so only return false
+        return false;
     }
+    return false;
+}
+
+void Rules::addStraightPseudoLegalMoves(const std::pair<int, int> &start, 
+    Board &board, std::shared_ptr<Piece> &piece, std::vector<Move> &moves)
+{
+    int row = start.first, col = start.second;
+    int boardSize = board.getSize();
+
+    // adds all the horizontal pseudo-legal moves
+    for (int i = col + 1; i < boardSize; ++i) {
+        if (!isPseudoLegalMove(start, {row, i}, board, piece, moves))
+            break;
+    }
+    for (int i = col - 1; i >= 0; --i) {
+        if (!isPseudoLegalMove(start, {row, i}, board, piece, moves))
+            break;
+    }
+
+    // adds all the vertical pseudo-legal moves
+    for (int i = row + 1; i < boardSize; ++i) {
+        if (!isPseudoLegalMove(start, {i, col}, board, piece, moves))
+            break;
+    }
+    for (int i = row - 1; i >= 0; ++i) {
+        if (!isPseudoLegalMove(start, {i, col}, board, piece, moves))
+            break;
+    }
+}
+
+void Rules::addDiagonalPseudoLegalMoves(const std::pair<int, int> &start, 
+    Board &board, std::shared_ptr<Piece> &piece, std::vector<Move> &moves)
+{
+    int row = start.first, col = start.second;
+    int boardSize = board.getSize();
+
+    for (int i = row + 1, j = col + 1; i < boardSize && j < boardSize; ++i, ++j) {
+        if (!isPseudoLegalMove(start, {i, j}, board, piece, moves))
+            break;
+    }
+    for (int i = row - 1, j = col - 1; i >= 0 && j >= 0; --i, --j) {
+        if (!isPseudoLegalMove(start, {i, j}, board, piece, moves))
+            break;
+    }
+    for (int i = row - 1, j = col + 1; i >= 0 && j < boardSize; --i, ++j) {
+        if (!isPseudoLegalMove(start, {i, j}, board, piece, moves))
+            break;
+    }
+    for (int i = row + 1, j = col - 1; i < boardSize && j >= 0; ++i, --j) {
+        if (!isPseudoLegalMove(start, {i, j}, board, piece, moves))
+            break;
+    }
+}
+
+std::vector<Move> 
+Rules::generatePseudoLegalMoves(const std::pair<int, int> &start, Board &board, 
+    const Move &previousMove)
+{
+    std::vector<Move> moves;
+
+    int row = start.first, col = start.second;
+    auto piece = board.getSquare(row, col).getPiece();
+
+    if (piece->getType() == PieceType::King) {
+        isPseudoLegalMove(start, {row - 1, col}, board, piece, moves);
+        isPseudoLegalMove(start, {row + 1, col}, board, piece, moves);
+        isPseudoLegalMove(start, {row, col - 1}, board, piece, moves);
+        isPseudoLegalMove(start, {row, col + 1}, board, piece, moves);
+        isPseudoLegalMove(start, {row - 1, col - 1}, board, piece, moves);
+        isPseudoLegalMove(start, {row + 1, col + 1}, board, piece, moves);
+        isPseudoLegalMove(start, {row - 1, col + 1}, board, piece, moves);
+        isPseudoLegalMove(start, {row + 1, col - 1}, board, piece, moves);
+    }
+    else if (piece->getType() == PieceType::Queen) {
+        addStraightPseudoLegalMoves(start, board, piece, moves);
+        addDiagonalPseudoLegalMoves(start, board, piece, moves);
+    }
+    else if (piece->getType() == PieceType::Bishop) {
+        addDiagonalPseudoLegalMoves(start, board, piece, moves);
+    }
+    else if (piece->getType() == PieceType::Rook) {
+        addStraightPseudoLegalMoves(start, board, piece, moves);
+    }
+    else if (piece->getType() == PieceType::Knight) {
+
+    }
+    return moves;
 }
 
 /*bool Rules::isKingMove(const std::pair<int, int> &start, 
@@ -291,27 +397,4 @@ bool Rules::isPawnMove(const std::pair<int, int> &start,
 }
 
 */
-std::vector<std::pair<int, int>> 
-Rules::allAttackingSquares(const std::pair<int, int> &pos, Board &board, 
-    const Move &previousMove) 
-{
-    std::vector<std::pair<int, int>> squares;
 
-    int row = pos.first, col = pos.second;
-    auto piece = board.getSquare(row, col).getPiece();
-
-    if (piece->getType() == PieceType::King) {
-        isAttackSquare(row - 1, col, board, piece, squares);
-        isAttackSquare(row + 1, col, board, piece, squares);
-        isAttackSquare(row, col - 1, board, piece, squares);
-        isAttackSquare(row, col + 1, board, piece, squares);
-        isAttackSquare(row - 1, col - 1, board, piece, squares);
-        isAttackSquare(row - 1, col - 1, board, piece, squares);
-        isAttackSquare(row + 1, col + 1, board, piece, squares);
-        isAttackSquare(row - 1, col + 1, board, piece, squares);
-        isAttackSquare(row + 1, col - 1, board, piece, squares);
-    }
-    else if (piece->getType() == PieceType::Queen) {
-        
-    }
-}
