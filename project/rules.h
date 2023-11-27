@@ -81,9 +81,9 @@ public:
     //  board, otherwise returns false
     static bool checkmate(const Board &board);
 
-    // returns true if there are no more legal moves on the board, otherwise 
-    //  returns false
-    static bool statemate(const Board &board);
+    // returns true if there are no more legal moves for the player of Colour
+    //  c, otherwise returns false
+    static bool statemate(Colour c, const Board &board, const Move &previousMove);
 };
 
 #endif

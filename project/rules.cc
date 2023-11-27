@@ -482,3 +482,32 @@ bool Rules::check(Colour c, const Board &board, const Move &previousMove) {
     }
 }
 
+bool Rules::statemate(Colour c, const Board &board, const Move &previousMove) {
+    if (c == Colour::White) {
+
+        // gets a reference to the set of all positions of squares that have
+        //  white pieces
+        auto &whitePieces = board.getWhitePieces();
+        for (auto &start : whitePieces) {
+            
+            // if the white player has any legal moves, return true
+            if (generateFullyLegalMoves(start, board, previousMove).size() > 0)
+                return false;
+        }
+        return true;
+    }
+    else {
+
+        // gets a reference to the set of all positions of squares that have
+        //  black pieces
+        auto &blackPieces = board.getBlackPieces();
+        for (auto &start : blackPieces) {
+            
+            // if the black player has any legal moves, return true
+            if (generateFullyLegalMoves(start, board, previousMove).size() > 0)
+                return false;
+        }
+        return true;
+    }
+}
+
