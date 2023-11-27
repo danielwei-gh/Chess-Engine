@@ -30,7 +30,7 @@ int Board::getSize() const {
     return boardSize;
 }
 
-Square& Board::getSquare(int row, int col) {
+const Square& Board::getSquare(int row, int col) const {
     return board[row][col];
 }
 
@@ -53,6 +53,10 @@ void Board::initBoard() {
         insertToPieces(1, i, Colour::Black);
     }
 
+    std::cout << "Black King: (" << blackKingPos.first << " "
+        << blackKingPos.second << ")" << std::endl;
+    std::cout << blackPieces.size() << std::endl;
+
     // initializes all white pieces
     board[7][0].setPiece(std::make_shared<Rook>(Colour::White));
     board[7][1].setPiece(std::make_shared<Knight>(Colour::White));
@@ -70,46 +74,45 @@ void Board::initBoard() {
         insertToPieces(6, i, Colour::White);
         insertToPieces(7, i, Colour::White);
     }
+
+    std::cout << "White King: (" << whiteKingPos.first << " "
+        << whiteKingPos.second << ")" << std::endl;
+    std::cout << whitePieces.size() << std::endl;
 }
 
-std::shared_ptr<Piece> Board::placePiece(int row, int col, Colour c, PieceType p) {
-    if (whiteKingPos.first == row && whiteKingPos.second == col)
-        whiteKingPos = {-1, -1};
-    else if (blackKingPos.first == row && blackKingPos.second == col)
-        blackKingPos = {-1, -1};
-    // inserts the position of the new piece into one of the sets
-    insertToPieces(row, col, c);
+void Board::placePiece(int row, int col, std::shared_ptr<Piece> newPiece) {
+    
+    // if newPiece is a null shared_ptr, return
+    if (!newPiece)
+        return;
 
-    // perhaps factory method would have been better, but this works for now
-    if (p == PieceType::King) {
-        if (c == Colour::White)
+    // inserts the position of the new piece into one of the sets
+    insertToPieces(row, col, newPiece->getColour());
+
+    // if newPiece is a King, update square positions for the King
+    if (newPiece->getType() == PieceType::King) {
+        if (newPiece->getColour() == Colour::White)
             whiteKingPos = {row, col};
         else
             blackKingPos = {row, col};
-        return board[row][col].setPiece(std::make_shared<King>(c));
     }
-    else if (p == PieceType::Queen)
-        return board[row][col].setPiece(std::make_shared<Queen>(c));
-    else if (p == PieceType::Bishop)
-        return board[row][col].setPiece(std::make_shared<Bishop>(c));
-    else if (p == PieceType::Rook)
-        return board[row][col].setPiece(std::make_shared<Rook>(c));
-    else if (p == PieceType::Knight)
-        return board[row][col].setPiece(std::make_shared<Knight>(c));
-    else
-        return board[row][col].setPiece(std::make_shared<Pawn>(c));
+    board[row][col].setPiece(newPiece);
 }
 
 std::shared_ptr<Piece> Board::removePiece(int row, int col) {
     std::shared_ptr<Piece> piece = board[row][col].getPiece();
-    if (piece) { // erases the position if piece is not null
+
+    // erases the position if piece is not null
+    if (piece) {
         Colour c = piece->getColour();
         eraseFromPieces(row, col, c);
+
+        // if piece is a King, reset the square positions to (-1, -1)
         if (piece->getType() == PieceType::King) {
             if (c == Colour::White)
-                whiteKingPos = {-1, -1}; // reset the position to (-1, -1)
+                whiteKingPos = {-1, -1};
             else
-                blackKingPos = {-1, -1}; // reset the position to (-1, -1)
+                blackKingPos = {-1, -1};
         }
     }
     return board[row][col].setPiece(std::shared_ptr<Piece>{});
