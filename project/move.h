@@ -6,7 +6,7 @@
 struct Move {
     // shared_ptr that points to the moved piece (if castling occured, 
     //  movedPiece would point to the castled King)
-    const std::shared_ptr<Piece> movedPiece;
+    std::shared_ptr<Piece> movedPiece;
 
     // pair that represents the row and column of the Square to which
     //  the moved piece was before the move (if castling occured, startPos
@@ -22,7 +22,7 @@ struct Move {
 
     // shared_ptr that points to the captured piece if there is one, otherwise
     //  capturedPiece is nullptr
-    const std::shared_ptr<Piece> capturedPiece;
+    std::shared_ptr<Piece> capturedPiece;
 
     // pair that represents the row and column of the Square to which
     //  the captured Pawn was before the enPassant if enPassant occured,
@@ -31,7 +31,7 @@ struct Move {
 
     // shared_ptr that points the to the castled Rook if castling occured, 
     //  otherwise castledRook is nullptr
-    const std::shared_ptr<Piece> castledRook;
+    std::shared_ptr<Piece> castledRook;
 
     // pair that represents the row and column of the Square to which
     //  the castled Rook was before the castling if castling occured,
@@ -44,12 +44,12 @@ struct Move {
     std::pair<int, int> rookEndPos;
 
     // constructor for Move
-    Move(const std::shared_ptr<Piece> movedPiece, 
+    Move(std::shared_ptr<Piece> movedPiece, 
         const std::pair<int, int> &startPos, 
         const std::pair<int, int> &endPos,
-        const std::shared_ptr<Piece> capturedPiece = nullptr,
+        std::shared_ptr<Piece> capturedPiece = nullptr,
         const std::pair<int, int> &enPassantPos = {-1, -1},
-        const std::shared_ptr<Piece> castledRook = nullptr,
+        std::shared_ptr<Piece> castledRook = nullptr,
         const std::pair<int, int> &rookStartPos = {-1, -1},
         const std::pair<int, int> &rookEndPos = {-1, -1});
 };

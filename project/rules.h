@@ -4,76 +4,86 @@
 #include "move.h"
 
 class Rules {
-    // returns true if the movement from start to end is a pseudo-legal 
-    //  straight move on the board, otherwise returns false
-    static bool isStraightMove(const std::pair<int, int> &start, 
-                        const std::pair<int, int> &end, Board &board);
-    // returns true if the movement from start to end is a pseudo-legal 
-    //  diagonal move on the board, otherwise returns false
-    static bool isDiagonalMove(const std::pair<int, int> &start, 
-                        const std::pair<int, int> &end, Board &board);
     
     // returns true if (row, col) is a valid square position on the board
-    static bool isValidPos(int row, int col, Board &board);
+    static bool isValidPos(int row, int col, const Board &board);
 
-    //
-    static void isAttackSquare(int row, int col, Board &board, 
-                        std::shared_ptr<Piece> &piece, 
-                        std::vector<std::pair<int, int>> &squares);
+    // returns true if there is no piece on the square with position end and
+    //  adds a Move to moves, otherwise if there is a piece on the square with
+    //  position end, if the piece has a different colour than movedPiece, adds
+    //  a Move to move and returns false, otherwise the piece has the same 
+    //  colour as movedPiece, returns false and does not change moves
+    static bool addPseudoLegalMove(const std::pair<int, int> &start, 
+                        const std::pair<int, int> &end, const Board &board, 
+                        std::shared_ptr<Piece> &movedPiece, 
+                        std::vector<Move> &moves);
+    
+    // adds all the straight pseudo-legal moves on the board for piece at the 
+    //  square with position start 
+    static void addStraightPseudoLegalMoves(const std::pair<int, int> &start, 
+                        const Board &board, std::shared_ptr<Piece> &piece,
+                        std::vector<Move> &moves);
+    
+    // adds all the diagonal pseudo-legal moves on the board for piece at the 
+    //  square with position start 
+    static void addDiagonalPseudoLegalMoves(const std::pair<int, int> &start, 
+                        const Board &board, std::shared_ptr<Piece> &piece,
+                        std::vector<Move> &moves);
+    
+    // adds all standard (non-capture) moves on the board for the Pawn at the
+    //  square with position start
+    static void addPawnStandardMoves(const std::pair<int, int> &start, 
+                        const Board &board, std::shared_ptr<Piece> &pawn, 
+                        std::vector<Move> &moves);
+                        
+    // adds all capture (excluding enPassant) moves on the board for the Pawn
+    //  at the square with position start
+    static void addPawnCaptureMoves(const std::pair<int, int> &start, 
+                        const Board &board, std::shared_ptr<Piece> &pawn, 
+                        std::vector<Move> &moves);
+
+    // adds all enPassant moves on the board for the Pawn at the square
+    //  with position start
+    static void addEnPassant(const std::pair<int, int> &start, 
+                        const Board &board, std::shared_ptr<Piece> &pawn, 
+                        const Move &previousMove, std::vector<Move> &moves);
+
+    // returns a vector of Moves of all the pseudo-legal moves from the piece
+    //  on the square with position start
+    static std::vector<Move>
+    generatePseudoLegalMoves(const std::pair<int, int> &start, 
+                        const Board &board, const Move &previousMove);
+    
+    // returns true if the square with position pos is under attack by pieces
+    //  with Colour c on the board, otherwise returns false
+    static bool isUnderAttack(Colour c, const std::pair<int, int> &pos, 
+                        const Board &board, const Move &previousMove);
+
+    // adds all castling moves on the board for the King at the square with 
+    //  position start
+    static void addCastling(const std::pair<int, int> &start, 
+                        const Board &board, std::shared_ptr<Piece> &king, 
+                        std::vector<Move> &moves, const Move &previousMove);
+
 public:
-    // returns true if the movement from start to end is a pseudo-legal 
-    //  King move (excluding castling) on the board, otherwise returns false
-    static bool isKingMove(const std::pair<int, int> &start, 
-                        const std::pair<int, int> &end, Board &board);
 
-    // returns true if the movement from start to end is a pseudo-legal 
-    //  Queen move on the board, otherwise returns false
-    static bool isQueenMove(const std::pair<int, int> &start, 
-                        const std::pair<int, int> &end, Board &board);
-    
-    // returns true if the movement from start to end is a pseudo-legal 
-    //  Bishop move on the board, otherwise returns false
-    static bool isBishopMove(const std::pair<int, int> &start, 
-                        const std::pair<int, int> &end, Board &board);
-    
-    // returns true if the movement from start to end is a pseudo-legal 
-    //  Rook move on the board, otherwise returns false
-    static bool isRookMove(const std::pair<int, int> &start, 
-                        const std::pair<int, int> &end, Board &board);
-    
-    // returns true if the movement from start to end is a pseudo-legal 
-    //  Knight move on the board, otherwise returns false
-    static bool isKnightMove(const std::pair<int, int> &start, 
-                        const std::pair<int, int> &end, Board &board);
+    // returns a vector of Moves of all the fully legal moves from the piece
+    //  on the square with position start
+    static std::vector<Move>
+    generateFullyLegalMoves(const std::pair<int, int> &start, 
+                        const Board &board, const Move &previousMove);
 
-    // returns true if the movement from start to end is a pseudo-legal 
-    //  Pawn move on the board, otherwise returns false
-    static bool isPawnMove(const std::pair<int, int> &start, 
-                        const std::pair<int, int> &end, Board &board,
-                        const Move &previousMove);
-    
-    // returns a vector of pairs that represent the position of
-    //  all the pseudo-legal attacking squares from the piece on the square
-    //  with position pos
-    static std::vector<std::pair<int, int>>
-    allAttackingSquares(const std::pair<int, int> &pos, Board &board, 
-                        const Move &previousMove);
-
-    // returns true if castling for the King with position kingPos is possible
-    //  on the board, otherwise returns false
-    static bool castling(const std::pair<int, int> &kingPos, const Board &board);
-
-    // returns true if the King with position kingPos is in check on the
-    //  board, otherwise returns false
-    static bool check(const std::pair<int, int> &kingPos, const Board &board);
+    // returns true if the King of Colour c is in check on the board,
+    //  otherwise returns false
+    static bool check(Colour c, const Board &board, const Move &previousMove);
 
     // returns true if the King with position kingPos is in checkmate on the
     //  board, otherwise returns false
-    static bool checkmate(const std::pair<int, int> &kingPos, const Board &board);
+    static bool checkmate(const Board &board);
 
-    // returns true if there are no more legal moves on the board, otherwise 
-    //  returns false
-    static bool statemate(const Board &board);
+    // returns true if there are no more legal moves for the player of Colour
+    //  c, otherwise returns false
+    static bool statemate(Colour c, const Board &board, const Move &previousMove);
 };
 
 #endif
