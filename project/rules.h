@@ -65,6 +65,13 @@ class Rules {
                         const Board &board, std::shared_ptr<Piece> &king, 
                         std::vector<Move> &moves, const Move &previousMove);
 
+    // adds all position of squares between the square with position start
+    //  and the square with position end to posVec (the piece on the square
+    //  with position start must be King and the piece on the square with
+    //  position end must be either Queen, Bishop, or Rook)
+    static void addSquarePosBetween(const std::pair<int, int> &start,
+                        const std::pair<int, int> &end, 
+                        std::vector<std::pair<int, int>> &posVec);
 public:
 
     // returns a vector of Moves of all the fully legal moves from the piece
@@ -77,9 +84,10 @@ public:
     //  otherwise returns false
     static bool check(Colour c, const Board &board, const Move &previousMove);
 
-    // returns true if the King with position kingPos is in checkmate on the
-    //  board, otherwise returns false
-    static bool checkmate(const Board &board);
+    // returns true if the King of Colour c is in checkmate on the board,
+    //  otherwise returns false (should be called only after Rules::check 
+    //  returns true)
+    static bool checkmate(Colour c, const Board &board, const Move &previousMove);
 
     // returns true if there are no more legal moves for the player of Colour
     //  c, otherwise returns false
