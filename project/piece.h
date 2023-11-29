@@ -20,50 +20,38 @@ public:
 
 class King final: public Piece {
 public:
-    King(Colour c): Piece{c, PieceType::King} {}
-    virtual char getSymbol() const override {
-        return getColour() == Colour::White ? 'K' : 'k';
-    }
+    King(Colour c);
+    virtual char getSymbol() const override;
 };
 
 class Queen final: public Piece {
 public:
-    Queen(Colour c): Piece{c, PieceType::Queen} {}
-    virtual char getSymbol() const override {
-        return getColour() == Colour::White ? 'Q' : 'q';
-    }
+    Queen(Colour c);
+    virtual char getSymbol() const override;
 };
 
 class Bishop final: public Piece {
 public:
-    Bishop(Colour c): Piece{c, PieceType::Bishop} {}
-    virtual char getSymbol() const override {
-        return getColour() == Colour::White ? 'B' : 'b';
-    }
+    Bishop(Colour c);
+    virtual char getSymbol() const override;
 };
 
 class Rook final: public Piece {
 public:
-    Rook(Colour c): Piece{c, PieceType::Rook} {}
-    virtual char getSymbol() const override {
-        return getColour() == Colour::White ? 'R' : 'r';
-    }
+    Rook(Colour c);
+    virtual char getSymbol() const override;
 };
 
 class Knight final: public Piece {
 public:
-    Knight(Colour c): Piece{c, PieceType::Knight} {}
-    virtual char getSymbol() const override {
-        return getColour() == Colour::White ? 'N' : 'n';
-    }
+    Knight(Colour c);
+    virtual char getSymbol() const override;
 };
 
 class Pawn final: public Piece {
 public:
-    Pawn(Colour c): Piece{c, PieceType::Pawn} {}
-    virtual char getSymbol() const override {
-        return getColour() == Colour::White ? 'P' : 'p';
-    }
+    Pawn(Colour c);
+    virtual char getSymbol() const override;
 };
 
 #endif

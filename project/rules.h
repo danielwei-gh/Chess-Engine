@@ -86,6 +86,16 @@ class Rules {
     static void addSquarePosBetween(const std::pair<int, int> &start,
                         const std::pair<int, int> &end, 
                         std::vector<std::pair<int, int>> &posVec);
+
+    // Rules::checkmateHelper is only called as a subprocedure of 
+    //  Rules::checkmate, ally and enemy both represent a colour, 
+    //  if ally is white then enemy is black and vice versa
+    static bool checkmateHelper(const Board &board, const Move &previousMove,
+                        const std::pair<int, int> &allyKingPos, 
+                        const std::pair<int, int> &enemyKingPos,
+                        const std::set<std::pair<int, int>> &allyPieces,
+                        const std::set<std::pair<int, int>> &enemyPieces);
+    
 public:
 
     // returns a vector of Moves of all the fully legal moves from the piece
@@ -105,7 +115,7 @@ public:
 
     // returns true if there are no more legal moves for the player of Colour
     //  c, otherwise returns false
-    static bool statemate(Colour c, const Board &board, const Move &previousMove);
+    static bool stalemate(Colour c, const Board &board, const Move &previousMove);
 };
 
 #endif

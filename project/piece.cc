@@ -17,3 +17,39 @@ void Piece::firstMove() {
 bool Piece::isMoved() const {
     return hasMoved;
 }
+
+King::King(Colour c): Piece{c, PieceType::King} {}
+
+char King::getSymbol() const {
+    return getColour() == Colour::White ? 'K' : 'k';
+}
+
+Queen::Queen(Colour c): Piece{c, PieceType::Queen} {}
+
+char Queen::getSymbol() const {
+    return getColour() == Colour::White ? 'Q' : 'q';
+}
+
+Bishop::Bishop(Colour c): Piece{c, PieceType::Bishop} {}
+
+char Bishop::getSymbol() const {
+    return getColour() == Colour::White ? 'B' : 'b';
+}
+
+Rook::Rook(Colour c): Piece{c, PieceType::Rook} {}
+
+char Rook::getSymbol() const {
+    return getColour() == Colour::White ? 'R' : 'r';
+}
+
+Knight::Knight(Colour c): Piece{c, PieceType::Knight} {}
+
+char Knight::getSymbol() const {
+    return getColour() == Colour::White ? 'N' : 'n';
+}
+
+Pawn::Pawn(Colour c): Piece{c, PieceType::Pawn} {}
+
+char Pawn::getSymbol() const {
+    return getColour() == Colour::White ? 'P' : 'p';
+}
