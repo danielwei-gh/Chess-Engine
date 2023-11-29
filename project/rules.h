@@ -59,6 +59,20 @@ class Rules {
     static bool isUnderAttack(Colour c, const std::pair<int, int> &pos, 
                         const Board &board, const Move &previousMove);
 
+    // adds the move of castling with the left Rook on the board for the King 
+    //  at the square with position start (Rules::addLeftCastling should only
+    //  be called by Rules::addCastling as a subprocedure)
+    static void addLeftCastling(const std::pair<int, int> &start, 
+                        const Board &board, std::shared_ptr<Piece> &king, 
+                        std::vector<Move> &moves, const Move &previousMove);
+    
+    // adds the move of castling with the right Rook on the board for the King 
+    //  at the square with position start (Rules::addRightCastling should only
+    //  be called by Rules::addCastling as a subprocedure)
+    static void addRightCastling(const std::pair<int, int> &start, 
+                        const Board &board, std::shared_ptr<Piece> &king, 
+                        std::vector<Move> &moves, const Move &previousMove);
+
     // adds all castling moves on the board for the King at the square with 
     //  position start
     static void addCastling(const std::pair<int, int> &start, 

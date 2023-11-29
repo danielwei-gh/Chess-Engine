@@ -55,7 +55,7 @@ void Rules::addStraightPseudoLegalMoves(const std::pair<int, int> &start,
         if (!addPseudoLegalMove(start, {i, col}, board, piece, moves))
             break;
     }
-    for (int i = row - 1; i >= 0; ++i) {
+    for (int i = row - 1; i >= 0; --i) {
         if (!addPseudoLegalMove(start, {i, col}, board, piece, moves))
             break;
     }
@@ -281,56 +281,18 @@ bool Rules::isUnderAttack(Colour c, const std::pair<int, int> &pos,
     }
 }
 
-void Rules::addCastling(const std::pair<int, int> &start, const Board &board, 
+void Rules::addLeftCastling(const std::pair<int, int> &start, const Board &board, 
     std::shared_ptr<Piece> &king, std::vector<Move> &moves, 
     const Move &previousMove)
 {
-    // if the King is not on the starting square for castling, return
-    if (start != std::pair<int, int>{0, 4} || start != std::pair<int, int>{7, 4})
-        return;
+    int row = start.first, col = start.second;
 
-    // if the King has moved, return
-    if (king->isMoved())
-        return;
-    
-    int row = start.first, col = start.second; 
-    
-    int rookCol = col + 3;
+    int rookCol = col - 4;
     auto rook = board.getSquare(row, rookCol).getPiece();
 
-    // if the Rook has a different colour than the King, return
-    if (rook->getColour() != king->getColour())
+    // if there is no Rook on the square with position (row, rookCol), return
+    if (!rook)
         return;
-
-    // if the Rook to right is on the square with position (row, rookCol)
-    //  and hasn't moved
-    if (rook && !rook->isMoved()) {
-        for (int i = col + 1; i < rookCol; ++i) {
-
-            // if there is a piece between the King and the Rook to the
-            //  right, return
-            if (board.getSquare(row, i).getPiece())
-                return;
-        }
-
-        // gets the colour that is opposite the King's colour
-        Colour enemyColour = king->getColour() == Colour::White ? 
-            Colour::Black : Colour::White;
-        
-        for (int i = col; i < rookCol; ++i) {
-
-            // if the starting position, final position, or the positions
-            //  in between the castle are under attack, return
-            if (isUnderAttack(enemyColour, {row, i}, board, previousMove))
-                return;
-        }
-        moves.emplace_back(king, start, std::pair<int, int>{row, col + 2},
-            nullptr, std::pair<int, int>{-1, -1}, rook, 
-            std::pair<int, int>{row, rookCol}, std::pair<int, int>{row, col + 1});
-    }
-
-    rookCol = col - 4;
-    rook = board.getSquare(row, rookCol).getPiece();
 
     // if the Rook has a different colour than the King, return
     if (rook->getColour() != king->getColour())
@@ -338,7 +300,7 @@ void Rules::addCastling(const std::pair<int, int> &start, const Board &board,
 
     // if the Rook to left is on the square with position (row, rookCol)
     //  and hasn't moved
-    if (rook && !rook->isMoved()) {
+    if (!rook->isMoved()) {
         for (int i = col - 1; i > rookCol; --i) {
 
             // if there is a piece between the King and the Rook to the
@@ -362,6 +324,67 @@ void Rules::addCastling(const std::pair<int, int> &start, const Board &board,
             nullptr, std::pair<int, int>{-1, -1}, rook,
             std::pair<int, int>{row, rookCol}, std::pair<int, int>{row, col - 1});
     }
+}
+
+void Rules::addRightCastling(const std::pair<int, int> &start, const Board &board, 
+    std::shared_ptr<Piece> &king, std::vector<Move> &moves, 
+    const Move &previousMove)
+{   
+    int row = start.first, col = start.second; 
+    
+    int rookCol = col + 3;
+    auto rook = board.getSquare(row, rookCol).getPiece();
+
+    // if there is no Rook on the square with position (row, rookCol), return
+    if (!rook)
+        return;
+
+    // if the Rook has a different colour than the King, return
+    if (rook->getColour() != king->getColour())
+        return;
+
+    // if the Rook to right is on the square with position (row, rookCol)
+    //  and hasn't moved
+    if (!rook->isMoved()) {
+        for (int i = col + 1; i < rookCol; ++i) {
+
+            // if there is a piece between the King and the Rook to the
+            //  right, return
+            if (board.getSquare(row, i).getPiece())
+                return;
+        }
+
+        // gets the colour that is opposite the King's colour
+        Colour enemyColour = king->getColour() == Colour::White ? 
+            Colour::Black : Colour::White;
+        
+        for (int i = col; i < rookCol; ++i) {
+
+            // if the starting position, final position, or the positions
+            //  in between the castle are under attack, return
+            if (isUnderAttack(enemyColour, {row, i}, board, previousMove))
+                return;
+        }
+        moves.emplace_back(king, start, std::pair<int, int>{row, col + 2},
+            nullptr, std::pair<int, int>{-1, -1}, rook, 
+            std::pair<int, int>{row, rookCol}, std::pair<int, int>{row, col + 1});
+    }
+}
+
+void Rules::addCastling(const std::pair<int, int> &start, const Board &board, 
+    std::shared_ptr<Piece> &king, std::vector<Move> &moves, 
+    const Move &previousMove)
+{
+    // if the King is not on the starting square for castling, return
+    if (start != std::pair<int, int>{0, 4} && start != std::pair<int, int>{7, 4})
+        return;
+
+    // if the King has moved, return
+    if (king->isMoved())
+        return;
+    
+    addLeftCastling(start, board, king, moves, previousMove);
+    addRightCastling(start, board, king, moves, previousMove);
 }
 
 void Rules::addSquarePosBetween(const std::pair<int, int> &start,
@@ -631,7 +654,7 @@ bool Rules::checkmate(Colour c, const Board &board, const Move &previousMove)
         return true;
     }
     else {
-
+        return false; // not finished, just for compile purpose
     }
 }
 
