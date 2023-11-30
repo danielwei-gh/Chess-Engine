@@ -44,6 +44,10 @@ struct Move {
     //  otherwise rookStartPos is (-1, -1)
     std::pair<int, int> rookEndPos;
 
+    // default constructor for Move, all shared_ptr fields are initialized to
+    //  nullptr and all pairs are initialized to (-1, -1)
+    Move();
+
     // constructor for Move
     Move(std::shared_ptr<Piece> movedPiece, 
         const std::pair<int, int> &startPos, 

@@ -1,5 +1,9 @@
 #include "move.h"
 
+Move::Move(): movedPiece{nullptr}, startPos{-1, -1}, endPos{-1, -1},
+    capturedPiece{nullptr}, enPassantPos{-1, -1}, castledRook{nullptr},
+    rookStartPos{-1, -1}, rookEndPos{-1, -1} {}
+
 Move::Move(std::shared_ptr<Piece> movedPiece, 
     const std::pair<int, int> &startPos, 
     const std::pair<int, int> &endPos,

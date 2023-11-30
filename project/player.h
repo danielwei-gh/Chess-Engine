@@ -12,7 +12,8 @@ public:
     Colour getColour() const;
     void setScore(double newScore);
     double getScore() const;
-    virtual Move makeMove(Board &board) = 0;
+    virtual Move makeMove(const Board &board) = 0;
+    virtual ~Player() = default;
 };
 
 #endif
