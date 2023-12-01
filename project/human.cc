@@ -3,16 +3,6 @@
 
 HumanPlayer::HumanPlayer(Colour c): Player{c}
 {
-    // rowMap = {
-    //     {'8', 0}, {'7', 1}, {'6', 2}, {'5', 3}, 
-    //     {'4', 4}, {'3', 5}, {'2', 6}, {'1', 7}
-    // };
-
-    // columnMap = {
-    //     {'a', 0}, {'b', 1}, {'c', 2}, {'d', 3}, 
-    //     {'e', 4}, {'f', 5}, {'g', 6}, {'h', 7}
-    // };
-
     squareMap = {
         {"a8", {0, 0}}, {"b8", {0, 1}}, {"c8", {0, 2}}, {"d8", {0, 3}},
         {"e8", {0, 4}}, {"f8", {0, 5}}, {"g8", {0, 6}}, {"h8", {0, 7}},
@@ -50,7 +40,7 @@ Move HumanPlayer::makeMove(const Board &board, const Move &previousMove)
         // if the arguments are invalid, re-prompt the player for another pair
         if (!squareMap.contains(strStart) || !squareMap.contains(strEnd)) {
             std::getline(std::cin, aux);
-            std::cout << "Invalid arguments. Enter again: [(a1-h8) (a1-h8)]" 
+            std::cout << "Invalid arguments. Enter arguments: [(a1-h8) (a1-h8)]" 
                 << std::endl;
             continue;
         }
@@ -68,7 +58,7 @@ Move HumanPlayer::makeMove(const Board &board, const Move &previousMove)
         if (!piece || piece->getColour() != getColour()) {
             std::getline(std::cin, aux);
             std::cout << "No piece to move or invalid piece to move."
-                << " Enter again: [(a1-h8) (a1-h8)]" << std::endl;
+                << " Enter arguments: [(a1-h8) (a1-h8)]" << std::endl;
             continue;
         }
 
@@ -87,11 +77,34 @@ Move HumanPlayer::makeMove(const Board &board, const Move &previousMove)
         }
 
         std::getline(std::cin, aux);
-        std::cout << "Move is illegal. Enter again: [(a1-h8) (a1-h8)]" 
+        std::cout << "Move is illegal. Enter arguments: [(a1-h8) (a1-h8)]" 
             << std::endl;
     }
 
     // this statement is just for compiling purposes, will never run due to
     //  the while loop that prompts for a legal move
     return Move();
+}
+
+PieceType HumanPlayer::promotionPiece() 
+{
+    std::map<std::string, PieceType> pieceTypeMap {
+        {"Q", PieceType::Queen}, {"B", PieceType::Bishop},
+        {"R", PieceType::Rook}, {"N", PieceType::Knight}
+    };
+    std::string strPieceType, aux;
+    
+    while (std::cin >> strPieceType) {
+        std::getline(std::cin, aux);
+
+        if (pieceTypeMap.contains(strPieceType))
+            return pieceTypeMap[strPieceType];
+        else
+            std::cout << "Invalid promotion piece. Enter argument: [Q, B, R, N]"
+                << std::endl;
+    }
+
+    // this statement is just for compiling purposes, will never run due to
+    //  the while loop that prompts for a valid promotion piece
+    return PieceType::King;
 }
