@@ -1,6 +1,7 @@
 #ifndef __PIECE_H__
 #define __PIECE_H__
 #include "colour.h"
+#include <memory>
 
 enum class PieceType { King, Queen, Bishop, Rook, Knight, Pawn };
 
@@ -53,5 +54,9 @@ public:
     Pawn(Colour c);
     virtual char getSymbol() const override;
 };
+
+// returns a shared_ptr to a newly allocated Piece of specified Colour c
+//  and PieceType type
+std::shared_ptr<Piece> generatePiece(Colour c, PieceType type);
 
 #endif

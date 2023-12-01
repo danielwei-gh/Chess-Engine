@@ -3,9 +3,17 @@
 #include "player.h"
 
 class HumanPlayer final: public Player {
+    // std::map<char, int> rowMap;
+    // std::map<char, int> columnMap;
+    std::map<std::string, std::pair<int, int>> squareMap;
 public:
     explicit HumanPlayer(Colour c);
-    virtual Move makeMove(const Board &board) override;
+
+    // returns a Move by prompting the human player
+    virtual Move
+        makeMove(const Board &board, const Move &previousMove) override;
+        
+    virtual PieceType promotionPiece() override;
 };
 
 #endif

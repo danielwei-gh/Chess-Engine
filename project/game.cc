@@ -15,6 +15,8 @@ void Game::start() {
     std::string outerCommand, arg;
     bool customSetup = false;
 
+    Player *currentPlayer = nullptr;
+
     while (std::cin >> outerCommand) {
 
         if (outerCommand == "game") {
@@ -48,7 +50,7 @@ void Game::start() {
             if (customSetup)
                 board.initBoard();
             
-            Player *currentPlayer = player1.get();
+            currentPlayer = player1.get();
 
             std::string innerCommand;
 
@@ -57,11 +59,41 @@ void Game::start() {
                 if (innerCommand == "move") {
 
                     // gets the player's move
-                    Move playerMove = currentPlayer->makeMove(board);
-
+                    Move playerMove = 
+                        currentPlayer->makeMove(board, previousMove());
                     
+                    int startRow = playerMove.startPos.first;
+                    int startCol = playerMove.startPos.second;
 
+                    int endRow = playerMove.endPos.first;
+                    int endCol = playerMove.endPos.second;
 
+                    int enPassantRow = playerMove.enPassantPos.first;
+                    int enPassantCol = playerMove.enPassantPos.second;
+
+                    // move the attacking piece and remove the captured piece
+                    //  (if there is one)
+                    auto attackingPiece = board.removePiece(startRow, startCol);
+                    board.removePiece(endRow, endCol);
+                    board.placePiece(endRow, endCol, attackingPiece);
+
+                    // if the move was enPassant, remove the enPassanted piece
+                    if (enPassantRow != -1 && enPassantRow != -1)
+                        board.removePiece(enPassantRow, enPassantCol);
+                    
+                    // otherwise if the move was castling
+                    else if (playerMove.castledRook) {
+                        int rookStartRow = playerMove.rookStartPos.first;
+                        int rookStartCol = playerMove.rookStartPos.second;
+
+                        int rookEndRow = playerMove.rookEndPos.first;
+                        int rookEndCol = playerMove.rookEndPos.second;
+                        
+                        // move the castled Rook
+                        auto castledRook = board.removePiece(rookStartRow, rookStartCol);
+                        board.removePiece(rookEndRow, rookEndCol);
+                        board.placePiece(rookEndRow, rookEndCol, castledRook);
+                    }
 
                 } else if (innerCommand == "resign") {
 

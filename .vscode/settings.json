@@ -53,6 +53,7 @@
         "condition_variable": "cpp",
         "set": "cpp",
         "optional": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "span": "cpp"
     }
 }

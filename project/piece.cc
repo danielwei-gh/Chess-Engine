@@ -53,3 +53,23 @@ Pawn::Pawn(Colour c): Piece{c, PieceType::Pawn} {}
 char Pawn::getSymbol() const {
     return getColour() == Colour::White ? 'P' : 'p';
 }
+
+std::shared_ptr<Piece> generatePiece(Colour c, PieceType type) {
+    if (type == PieceType::King)
+        return std::make_shared<King>(c);
+
+    else if (type == PieceType::Queen)
+        return std::make_shared<Queen>(c);
+
+    else if (type == PieceType::Bishop)
+        return std::make_shared<Bishop>(c);
+
+    else if (type == PieceType::Rook)
+        return std::make_shared<Rook>(c);
+
+    else if (type == PieceType::Knight)
+        return std::make_shared<Knight>(c);
+        
+    else
+        return std::make_shared<Pawn>(c);
+}
