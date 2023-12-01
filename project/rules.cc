@@ -482,7 +482,7 @@ bool Rules::check(Colour c, const Board &board, const Move &previousMove) {
     }
 }
 
-bool Rules::statemate(Colour c, const Board &board, const Move &previousMove) {
+bool Rules::stalemate(Colour c, const Board &board, const Move &previousMove) {
     if (c == Colour::White) {
 
         // gets a reference to the set of all positions of squares that have

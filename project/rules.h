@@ -83,7 +83,7 @@ public:
 
     // returns true if there are no more legal moves for the player of Colour
     //  c, otherwise returns false
-    static bool statemate(Colour c, const Board &board, const Move &previousMove);
+    static bool stalemate(Colour c, const Board &board, const Move &previousMove);
 };
 
 #endif
