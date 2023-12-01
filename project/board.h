@@ -36,6 +36,10 @@ public:
     // initializes the board with squares that have no pieces
     explicit Board(int size);
 
+    // copy constructor used only for the code of Rules::generateLegalMoves,
+    //  detaches all BoardDisplay observers to the Squares of the copy Board
+    Board(const Board &other);
+
     // returns the board size
     int getSize() const;
 
