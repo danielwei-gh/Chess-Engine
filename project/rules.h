@@ -59,12 +59,43 @@ class Rules {
     static bool isUnderAttack(Colour c, const std::pair<int, int> &pos, 
                         const Board &board, const Move &previousMove);
 
+    // adds the move of castling with the left Rook on the board for the King 
+    //  at the square with position start (Rules::addLeftCastling should only
+    //  be called by Rules::addCastling as a subprocedure)
+    static void addLeftCastling(const std::pair<int, int> &start, 
+                        const Board &board, std::shared_ptr<Piece> &king, 
+                        std::vector<Move> &moves, const Move &previousMove);
+    
+    // adds the move of castling with the right Rook on the board for the King 
+    //  at the square with position start (Rules::addRightCastling should only
+    //  be called by Rules::addCastling as a subprocedure)
+    static void addRightCastling(const std::pair<int, int> &start, 
+                        const Board &board, std::shared_ptr<Piece> &king, 
+                        std::vector<Move> &moves, const Move &previousMove);
+
     // adds all castling moves on the board for the King at the square with 
     //  position start
     static void addCastling(const std::pair<int, int> &start, 
                         const Board &board, std::shared_ptr<Piece> &king, 
                         std::vector<Move> &moves, const Move &previousMove);
 
+    // adds all position of squares between the square with position start
+    //  and the square with position end to posVec (the piece on the square
+    //  with position start must be King and the piece on the square with
+    //  position end must be either Queen, Bishop, or Rook)
+    static void addSquarePosBetween(const std::pair<int, int> &start,
+                        const std::pair<int, int> &end, 
+                        std::vector<std::pair<int, int>> &posVec);
+
+    // Rules::checkmateHelper is only called as a subprocedure of 
+    //  Rules::checkmate, ally and enemy both represent a colour, 
+    //  if ally is white then enemy is black and vice versa
+    static bool checkmateHelper(const Board &board, const Move &previousMove,
+                        const std::pair<int, int> &allyKingPos, 
+                        const std::pair<int, int> &enemyKingPos,
+                        const std::set<std::pair<int, int>> &allyPieces,
+                        const std::set<std::pair<int, int>> &enemyPieces);
+    
 public:
 
     // returns a vector of Moves of all the fully legal moves from the piece
@@ -77,9 +108,10 @@ public:
     //  otherwise returns false
     static bool check(Colour c, const Board &board, const Move &previousMove);
 
-    // returns true if the King with position kingPos is in checkmate on the
-    //  board, otherwise returns false
-    static bool checkmate(const Board &board);
+    // returns true if the King of Colour c is in checkmate on the board,
+    //  otherwise returns false (should be called only after Rules::check 
+    //  returns true)
+    static bool checkmate(Colour c, const Board &board, const Move &previousMove);
 
     // returns true if there are no more legal moves for the player of Colour
     //  c, otherwise returns false

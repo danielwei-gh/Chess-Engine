@@ -2,6 +2,7 @@
 #define __MOVE_H__
 #include "piece.h"
 #include <memory>
+#include <map>
 
 struct Move {
     // shared_ptr that points to the moved piece (if castling occured, 
@@ -43,6 +44,10 @@ struct Move {
     //  otherwise rookStartPos is (-1, -1)
     std::pair<int, int> rookEndPos;
 
+    // default constructor for Move, all shared_ptr fields are initialized to
+    //  nullptr and all pairs are initialized to (-1, -1)
+    Move();
+
     // constructor for Move
     Move(std::shared_ptr<Piece> movedPiece, 
         const std::pair<int, int> &startPos, 
@@ -53,5 +58,7 @@ struct Move {
         const std::pair<int, int> &rookStartPos = {-1, -1},
         const std::pair<int, int> &rookEndPos = {-1, -1});
 };
+
+std::ostream &operator<<(std::ostream &out, const Move &move);
 
 #endif

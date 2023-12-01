@@ -26,6 +26,17 @@ whiteKingPos{-1, -1}, blackKingPos{-1, -1} {
     }
 }
 
+Board::Board(const Board &other): boardSize{other.boardSize}, 
+    board{other.board}, display{other.display}, whitePieces{other.whitePieces},
+    blackPieces{other.blackPieces}, whiteKingPos{other.whiteKingPos},
+    blackKingPos{other.blackKingPos}
+{
+    for (int i = 0; i < boardSize; ++i) {
+        for (int j = 0; j < boardSize; ++j)
+            board[i][j].detach(display);
+    }
+}
+
 int Board::getSize() const {
     return boardSize;
 }
@@ -53,10 +64,6 @@ void Board::initBoard() {
         insertToPieces(1, i, Colour::Black);
     }
 
-    std::cout << "Black King: (" << blackKingPos.first << " "
-        << blackKingPos.second << ")" << std::endl;
-    std::cout << blackPieces.size() << std::endl;
-
     // initializes all white pieces
     board[7][0].setPiece(std::make_shared<Rook>(Colour::White));
     board[7][1].setPiece(std::make_shared<Knight>(Colour::White));
@@ -74,10 +81,6 @@ void Board::initBoard() {
         insertToPieces(6, i, Colour::White);
         insertToPieces(7, i, Colour::White);
     }
-
-    std::cout << "White King: (" << whiteKingPos.first << " "
-        << whiteKingPos.second << ")" << std::endl;
-    std::cout << whitePieces.size() << std::endl;
 }
 
 void Board::placePiece(int row, int col, std::shared_ptr<Piece> newPiece) {
