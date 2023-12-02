@@ -4,6 +4,8 @@
 
 class ComputerPlayer final: public Player {
     int difficultyLevel;
+
+    float evalMove(const Move &move, int level) const;
 public:
     ComputerPlayer(Colour c, int level);
     
