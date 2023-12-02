@@ -2,7 +2,7 @@
 #include "rules.h"
 
 float ComputerPlayer::evalMove(const Move &move, int level) const {
-
+    return 0;
 }
 
 ComputerPlayer::ComputerPlayer(Colour c, int level) : 
@@ -27,4 +27,13 @@ Move ComputerPlayer::makeMove(const Board &board, const Move &previousMove) {
         int moveNum = rand() % length;
         return moves[moveNum];
     }
+    return moves[0];
+}
+
+PieceType ComputerPlayer::promotionPiece() {
+    if (difficultyLevel == 1) {
+        PieceType pt = static_cast<PieceType>(rand() % static_cast<int>(PieceType::Knight) + static_cast<int>(PieceType::Queen));
+        std::cout << "PIECE" << static_cast<int>(pt) << std::endl;
+    }
+    return PieceType::Queen;
 }
