@@ -69,3 +69,8 @@ void Xwindow::drawString(int x, int y, string msg) {
   XDrawString(d, w, DefaultGC(d, s), x, y, msg.c_str(), msg.length());
 }
 
+void Xwindow::setFont(){
+  myFont = XLoadQueryFont(d,
+        "-misc-fixed-medium-r-normal--9-90-75-75-c-60-iso10646-1");
+  XSetFont(d, gc, myFont->fid);
+}
