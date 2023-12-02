@@ -12,7 +12,7 @@ public:
     virtual Move
         makeMove(const Board &board, const Move &previousMove) override;
 
-    virtual PieceType promotionPiece();
+    virtual PieceType promotionPiece() override;
 };
 
 #endif

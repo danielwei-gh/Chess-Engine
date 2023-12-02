@@ -33,56 +33,53 @@ HumanPlayer::HumanPlayer(Colour c): Player{c}
 Move HumanPlayer::makeMove(const Board &board, const Move &previousMove)
 {   
     std::string strStart, strEnd, aux;
-    std::pair<int, int> start, end;
+    std::cin >> strStart >> strEnd;
 
-    while (std::cin >> strStart >> strEnd) {
-
-        // if the arguments are invalid, re-prompt the player for another pair
-        if (!squareMap.contains(strStart) || !squareMap.contains(strEnd)) {
-            std::getline(std::cin, aux);
-            std::cout << "Invalid arguments. Enter arguments: [(a1-h8) (a1-h8)]" 
-                << std::endl;
-            continue;
-        }
-
-        // gets the starting and ending positions of the piece to be moved
-        start = squareMap[strStart];
-        end = squareMap[strEnd];
-
-        // gets the piece to be moved
-        auto piece = board.getSquare(start.first, start.second).getPiece();
-
-        // if there is no piece on the square with position start or the piece
-        //  has a different colour than the player's assigned colour, re-prompt
-        //  the player for another pair
-        if (!piece || piece->getColour() != getColour()) {
-            std::getline(std::cin, aux);
-            std::cout << "No piece to move or invalid piece to move."
-                << " Enter arguments: [(a1-h8) (a1-h8)]" << std::endl;
-            continue;
-        }
-
-        // generate all legal moves for the piece on the square with 
-        //  position start
-        std::vector<Move> fullyLegalMoves = 
-            Rules::generateFullyLegalMoves(start, board, previousMove);
-        
-        for (auto &move : fullyLegalMoves) {
-
-            // if the ending position of one of the legal moves is the same as
-            //  end, return that legal move
-            if (move.endPos == end) {
-                return move;
-            }
-        }
-
+    // if the arguments are invalid, return a default constructed Move
+    //  to indicate prompt failure
+    if (!squareMap.contains(strStart) || !squareMap.contains(strEnd)) 
+    {
+        std::cout << "\nInvalid arguments: " << strStart << " or " 
+            << strEnd << std::endl;
         std::getline(std::cin, aux);
-        std::cout << "Move is illegal. Enter arguments: [(a1-h8) (a1-h8)]" 
-            << std::endl;
+        return Move();
     }
 
-    // this statement is just for compiling purposes, will never run due to
-    //  the while loop that prompts for a legal move
+    // gets the starting and ending positions of the piece to be moved
+    std::pair<int, int> start = squareMap[strStart];
+    std::pair<int, int> end = squareMap[strEnd];
+
+    // gets the piece to be moved
+    auto piece = board.getSquare(start.first, start.second).getPiece();
+
+    // if there is no piece on the square with position start or the piece
+    //  has a different colour than the player's assigned colour, return a 
+    //  default constructed Move to indicate prompt failure
+    if (!piece || piece->getColour() != getColour()) 
+    {    
+        std::cout << "\nNo piece to move or invalid piece to move." << std::endl;
+        std::getline(std::cin, aux);
+        return Move();
+    }
+
+    // generate all legal moves for the piece on the square with 
+    //  position start
+    std::vector<Move> fullyLegalMoves = 
+        Rules::generateFullyLegalMoves(start, board, previousMove);
+    
+    for (auto &move : fullyLegalMoves) {
+
+        // if the ending position of one of the legal moves is the same as
+        //  end, return that legal move
+        if (move.endPos == end) {
+            return move;
+        }
+    }
+
+    // otherwise the player's move is illegal, return a default constructed
+    //  Move to indicate prompt failure
+    std::cout << "\nMove is illegal." << std::endl;
+    std::getline(std::cin, aux);
     return Move();
 }
 
@@ -90,21 +87,19 @@ PieceType HumanPlayer::promotionPiece()
 {
     std::map<std::string, PieceType> pieceTypeMap {
         {"Q", PieceType::Queen}, {"B", PieceType::Bishop},
-        {"R", PieceType::Rook}, {"N", PieceType::Knight}
+        {"R", PieceType::Rook}, {"N", PieceType::Knight},
+        {"q", PieceType::Queen}, {"b", PieceType::Bishop},
+        {"r", PieceType::Rook}, {"n", PieceType::Knight},
     };
     std::string strPieceType, aux;
+    std::cin >> strPieceType;
     
-    while (std::cin >> strPieceType) {
-        std::getline(std::cin, aux);
-
-        if (pieceTypeMap.contains(strPieceType))
-            return pieceTypeMap[strPieceType];
-        else
-            std::cout << "Invalid promotion piece. Enter argument: [Q, B, R, N]"
-                << std::endl;
-    }
-
-    // this statement is just for compiling purposes, will never run due to
-    //  the while loop that prompts for a valid promotion piece
+    // if strPieceType is valid, return the corresponding PieceType
+    if (pieceTypeMap.contains(strPieceType))
+        return pieceTypeMap[strPieceType];
+    
+    // otherwise return a PieceType::King to indicate prompt failure
+    std::cout << "\nInvalid promotion piece." << std::endl;
+    std::getline(std::cin, aux);
     return PieceType::King;
 }

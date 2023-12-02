@@ -24,7 +24,7 @@ class Game {
     std::stack<Move> moveHistory;
 
     // returns the previous move made
-    Move previousMove() const;
+    Move getPreviousMove() const;
 public:
     explicit Game(int size = 8);
 
