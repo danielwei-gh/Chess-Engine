@@ -54,6 +54,8 @@
         "set": "cpp",
         "optional": "cpp",
         "thread": "cpp",
-        "span": "cpp"
+        "span": "cpp",
+        "cstdarg": "cpp",
+        "fstream": "cpp"
     }
 }

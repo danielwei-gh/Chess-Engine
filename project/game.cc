@@ -1,6 +1,6 @@
 #include "game.h"
 
-Move Game::previousMove() const {
+Move Game::getPreviousMove() const {
     return moveHistory.top();
 }
 
@@ -12,13 +12,17 @@ Game::Game(int size): board{size}, whiteScore{0.0}, blackScore{0.0} {
 }
 
 void Game::start() {
-    std::string outerCommand;
+    std::string outerCommand, aux;
     bool customSetup = false;
     Colour firstPlayerColour = Colour::White;
 
-    std::cout << "Enter command: " << std::endl;
+    while (true) {
 
-    while (std::cin >> outerCommand) {
+        std::cout << "\nEnter command: ";
+        std::cin >> outerCommand;
+
+        if (!std::cin)
+            break;
 
         if (outerCommand == "game") {
             std::string whitePlayer, blackPlayer;
@@ -52,7 +56,7 @@ void Game::start() {
                 board.initBoard();
             
             // output the current board
-            std::cout << board << std::endl;
+            std::cout << "\n" << board << std::endl;
 
             // set up which colour player will play first
             Player *currentPlayer = firstPlayerColour == Colour::White ?
@@ -60,13 +64,26 @@ void Game::start() {
 
             std::string innerCommand;
 
-            while (std::cin >> innerCommand) {
+            while (true) {
+                
+                std::cout << "\n" << (currentPlayer->getColour() == Colour::White ?
+                    "White " : "Black ") << "player's turn: ";
+                std::cin >> innerCommand;
+
+                if (!std::cin)
+                    break;
 
                 if (innerCommand == "move") {
 
                     // gets the player's move
                     Move playerMove = 
-                        currentPlayer->makeMove(board, previousMove());
+                        currentPlayer->makeMove(board, getPreviousMove());
+                    
+                    // if the player's move is invalid or illegal, reprompt
+                    //  the player for another move (should only apply to
+                    //  human players)
+                    if (!playerMove.movedPiece)
+                        continue;
                     
                     int startRow = playerMove.startPos.first;
                     int startCol = playerMove.startPos.second;
@@ -111,11 +128,18 @@ void Game::start() {
 
                     // if the attacking pawn can perform pawn promotion
                     else if (attackingPiece->getType() == PieceType::Pawn &&
-                            (attackingColour == Colour::White && endRow == 0 ||
-                            attackingColour == Colour::Black && endRow == 7))
+                            ((attackingColour == Colour::White && endRow == 0) ||
+                            (attackingColour == Colour::Black && endRow == 7)))
                     {   
                         // gets the choice of promotion piece type from player
                         PieceType promotionType = currentPlayer->promotionPiece();
+
+                        // if the player's choice of promotion was invalid,
+                        //  set the promotion type to Queen
+                        if (promotionType == PieceType::King) {
+                            std::cout << "\nDefaulting to Queen." << std::endl;
+                            promotionType = PieceType::Queen;
+                        }
 
                         // remove the Pawn at (endRow, endCol) and replace with
                         //  a newly allocated chosen Piece
@@ -128,7 +152,7 @@ void Game::start() {
                     moveHistory.push(playerMove);
 
                     // output the current board
-                    std::cout << board << std::endl;
+                    std::cout << "\n" << board << std::endl;
 
                     // gets the colour of the current player
                     Colour allyColour = currentPlayer->getColour();
@@ -138,11 +162,11 @@ void Game::start() {
                         Colour::Black : Colour::White;
                     
                     // if the other player's King is now in check
-                    if (Rules::check(enemyColour, board, previousMove())) {
+                    if (Rules::check(enemyColour, board, getPreviousMove())) {
 
                         // if the other player's King is now in checkmate
-                        if (Rules::checkmate(enemyColour, board, previousMove())) {
-                            std::cout << "Checkmate! " 
+                        if (Rules::checkmate(enemyColour, board, getPreviousMove())) {
+                            std::cout << "\n" << "Checkmate! " 
                                 << (allyColour == Colour::White ? "White " : "Black ")
                                 << "wins!" << std::endl;
                             
@@ -154,13 +178,13 @@ void Game::start() {
                         }
                         
                         else
-                            std::cout << (enemyColour == Colour::White ? 
-                                "White " : "Black ") << "is in check." << std::endl;
+                            std::cout << "\n" << (enemyColour == Colour::White ? 
+                                "White " : "Black ") << "is in check."  << std::endl;
                     }
 
                     // if the other player's King is not in check and stalemated
-                    else if (Rules::stalemate(enemyColour, board, previousMove())) {
-                        std::cout << "Stalemate!" << std::endl;
+                    else if (Rules::stalemate(enemyColour, board, getPreviousMove())) {
+                        std::cout << "\nStalemate!" << std::endl;
                         
                         // increment both scores by half a point
                         whiteScore += 0.5;
@@ -175,17 +199,25 @@ void Game::start() {
                         player2.get() : player1.get();
 
                 } else if (innerCommand == "resign") {
-                    std::cout << (currentPlayer->getColour() == Colour::White ? 
+                    std::cout << "\n" << (currentPlayer->getColour() == Colour::White ? 
                         "Black wins!" : "White wins!") << std::endl;
+
+                    // increment the score for other player's colour
+                    currentPlayer->getColour() == Colour::White ? 
+                        ++blackScore : ++whiteScore;
 
                     // end the current game
                     break;
 
                 } else {
-                    std::cout << "Invalid command: " << innerCommand << std::endl;
-                    std::cout << "Enter command: " << std::endl;
+                    std::cout << "\nInvalid command: " << innerCommand << std::endl;
+                    std::getline(std::cin, aux);
                 }
             }
+            
+            // reset the customSetup flag, should replace with a board cleanup
+            //  method later
+            customSetup = false;
         }
 
         else if (outerCommand == "setup") {
@@ -193,7 +225,7 @@ void Game::start() {
             // indicate that setup mode has been entered
             customSetup = true;
 
-            std::string fnCommand, aux;
+            std::string fnCommand;
 
             // maps a string that represents the square position to a pair 
             //  of ints that represent the square position
@@ -243,122 +275,134 @@ void Game::start() {
                 {"p", {Colour::Black, PieceType::Pawn}},
             };
 
-            while (std::cin >> fnCommand) {
+            while (true) {
+
+                std::cout << "\nEnter function command: ";
+                std::cin >> fnCommand;
+
+                if (!std::cin)
+                    break;
 
                 if (fnCommand == "+") {
                     std::string strPiece, strPos;
-
-                    while (std::cin >> strPiece >> strPos) {
+                    std::cin >> strPiece >> strPos;
                         
-                        // if the arguments are invalid
-                        if (!pieceTypeMap.contains(strPiece) || 
-                            !squareMap.contains(strPos))
+                    // if the arguments are invalid
+                    if (!pieceTypeMap.contains(strPiece) || 
+                        !squareMap.contains(strPos))
+                    {
+                        std::cout << "\nInvalid arguments: " << strPiece
+                            << " or " << strPos << std::endl;
+                        std::getline(std::cin, aux);
+                        continue;
+                    }
+
+                    // if the piece to be placed is the white King
+                    if (strPiece == "K") {
+                        
+                        // gets the pair representing the position of the 
+                        //  white King on the board
+                        std::pair<int, int> whiteKingPos = board.getWhiteKingPos();
+
+                        // if there is already a white King on the board
+                        if (whiteKingPos.first != -1 && whiteKingPos.second != -1)
                         {
-                            std::getline(std::cin, aux);
-                            std::cout << "Invalid arguments. Enter arguments: " 
+                            std::cout << "\nWhite King already on the board." 
                                 << std::endl;
+                            std::getline(std::cin, aux);
                             continue;
                         }
-
-                        // if the piece to be placed is the white King
-                        if (strPiece == "K") {
-                            
-                            // gets the pair representing the position of the 
-                            //  white King on the board
-                            std::pair<int, int> whiteKingPos = board.getWhiteKingPos();
-
-                            // if there is already a white King on the board
-                            if (whiteKingPos.first != -1 && whiteKingPos.second != -1)
-                            {
-                                std::getline(std::cin, aux);
-                                std::cout << "White King already on the board. "
-                                    "Enter arguments: " << std::endl;
-                                continue;
-                            }
-                        }
-
-                        // if the piece to be placed is the black King
-                        if (strPiece == "k") {
-
-                            // gets the pair representing the position of the 
-                            //  black King on the board
-                            std::pair<int, int> blackKingPos = board.getBlackKingPos();
-
-                            // if there is already a black King on the board
-                            if (blackKingPos.first != -1 && blackKingPos.second != -1)
-                            {
-                                std::getline(std::cin, aux);
-                                std::cout << "Black King already on the board. "
-                                    "Enter arguments: " << std::endl;
-                                continue;
-                            }
-                        }
-
-                        Colour colour = pieceTypeMap[strPiece].first;
-                        PieceType type = pieceTypeMap[strPiece].second;
-                        int row = squareMap[strPos].first;
-                        int col = squareMap[strPos].second;
-                        
-                        // remove the piece on the square with position
-                        //  (row, col) if there is one, and place the newly
-                        //  allocate piece
-                        board.removePiece(row, col);
-                        auto newPiece = generatePiece(colour, type);
-                        board.placePiece(row, col, newPiece);
-
-                        // explicitly set the placed piece as moved to not
-                        //  handle enPassant and castling after board setup
-                        newPiece->firstMove();
-
-                        // redisplay the board
-                        std::cout << board << std::endl;
                     }
+
+                    // if the piece to be placed is the black King
+                    if (strPiece == "k") {
+
+                        // gets the pair representing the position of the 
+                        //  black King on the board
+                        std::pair<int, int> blackKingPos = board.getBlackKingPos();
+
+                        // if there is already a black King on the board
+                        if (blackKingPos.first != -1 && blackKingPos.second != -1)
+                        {
+                            std::cout << "\nBlack King already on the board. " 
+                                << std::endl;
+                            std::getline(std::cin, aux);
+                            continue;
+                        }
+                    }
+
+                    Colour colour = pieceTypeMap[strPiece].first;
+                    PieceType type = pieceTypeMap[strPiece].second;
+                    int row = squareMap[strPos].first;
+                    int col = squareMap[strPos].second;
+                    
+                    // remove the piece on the square with position
+                    //  (row, col) if there is one, and place the newly
+                    //  allocate piece
+                    board.removePiece(row, col);
+                    auto newPiece = generatePiece(colour, type);
+                    board.placePiece(row, col, newPiece);
+
+                    // explicitly set the placed piece as moved to not
+                    //  handle enPassant and castling after board setup
+                    newPiece->firstMove();
+
+                    // redisplay the board
+                    std::cout << "\n" << board << std::endl;
                 }
 
                 else if (fnCommand == "-") {
                     std::string strPos;
-
-                    while (std::cin >> strPos) {
+                    std::cin >> strPos;
                         
-                        // if the argument are invalid
-                        if (!squareMap.contains(strPos)) 
-                        {
-                            std::getline(std::cin, aux);
-                            std::cout << "Invalid argument. Enter argument: " 
-                                << std::endl;
-                            continue;
-                        }
-
-                        int row = squareMap[strPos].first;
-                        int col = squareMap[strPos].second;
-
-                        // remove the piece on the square with position
-                        //  (row, col) if there is one
-                        board.removePiece(row, col);
-
-                        // redisplay the board
-                        std::cout << board << std::endl;
+                    // if the argument are invalid
+                    if (!squareMap.contains(strPos)) 
+                    {
+                        std::cout << "\nInvalid argument: " << strPos << std::endl;
+                        std::getline(std::cin, aux);
+                        continue;
                     }
+
+                    int row = squareMap[strPos].first;
+                    int col = squareMap[strPos].second;
+
+                    // remove the piece on the square with position
+                    //  (row, col) if there is one
+                    auto removedPiece = board.removePiece(row, col);
+
+                    // if there is no piece on the square with position 
+                    //  (row, col)
+                    if (!removedPiece)
+                    {
+                        std::cout << "\nNo piece on " << strPos << "." << std::endl;
+                        std::getline(std::cin, aux);
+                        continue;
+                    }
+
+                    // redisplay the board
+                    std::cout << "\n" << board << std::endl;
                 }
 
                 else if (fnCommand == "=") {
                     std::string strColour;
+                    std::cin >> strColour;
 
-                    while (std::cin >> strColour) {
-
-                        if (strColour != "white" && strColour != "black")
-                        {
-                            std::getline(std::cin, aux);
-                            std::cout << "Invalid argument. Enter argument: "
-                                "[white-black]" << std::endl;
-                            continue;
-                        }
-
-                        // set the player who will play first to the
-                        //  the choice of colour
-                        firstPlayerColour = strColour == "white" ? 
-                            Colour::White : Colour::Black;
+                    if (strColour != "white" && strColour != "black")
+                    {
+                        std::cout << "\nInvalid argument: " << strColour 
+                            << std::endl;
+                        std::getline(std::cin, aux);
+                        continue;
                     }
+
+                    // set the player who will play first to the
+                    //  the choice of colour
+                    firstPlayerColour = strColour == "white" ? 
+                        Colour::White : Colour::Black;
+                    
+                    std::cout << "\n" << (firstPlayerColour == Colour::White ? 
+                        "White" : "Black") << " player will have the first move." 
+                        << std::endl;
                 }
 
                 else if (fnCommand == "done") {
@@ -369,12 +413,12 @@ void Game::start() {
                     std::pair<int, int> blackKingPos = board.getBlackKingPos();
 
                     // if there is no white King or black King on the board
-                    if (whiteKingPos.first == -1 && whiteKingPos.second == -1 ||
-                        blackKingPos.first == -1 && blackKingPos.second == -1)
+                    if ((whiteKingPos.first == -1 && whiteKingPos.second == -1) ||
+                        (blackKingPos.first == -1 && blackKingPos.second == -1))
                     {
+                        std::cout << "\nInvalid board setup. Continue to setup "
+                            "the board." << std::endl;
                         std::getline(std::cin, aux);
-                        std::cout << "Invalid board setup. Continue to setup "
-                            "the board. Enter command: " << std::endl;
                         continue;
                     }
 
@@ -410,49 +454,51 @@ void Game::start() {
                     //  board
                     if (firstOrLastRowPawn)
                     {
+                        std::cout << "\nInvalid board setup. Continue to setup "
+                            "the board." << std::endl;
                         std::getline(std::cin, aux);
-                        std::cout << "Invalid board setup. Continue to setup "
-                            "the board. Enter command: " << std::endl;
                         continue;
                     }
 
                     // if the white King is in check
-                    if (Rules::check(Colour::White, board, previousMove()))
+                    if (Rules::check(Colour::White, board, getPreviousMove()))
                     {
+                        std::cout << "\nInvalid board setup. Continue to setup "
+                            "the board." << std::endl;
                         std::getline(std::cin, aux);
-                        std::cout << "Invalid board setup. Continue to setup "
-                            "the board. Enter command: " << std::endl;
                         continue;
                     }
 
                     // if the black King is in check
-                    if (Rules::check(Colour::Black, board, previousMove()))
+                    if (Rules::check(Colour::Black, board, getPreviousMove()))
                     {
+                        std::cout << "\nInvalid board setup. Continue to setup "
+                            "the board." << std::endl;
                         std::getline(std::cin, aux);
-                        std::cout << "Invalid board setup. Continue to setup "
-                            "the board. Enter command: " << std::endl;
                         continue;
                     }
+
+                    std::cout << "\nBoard setup success." << std::endl;
 
                     // leave setup mode
                     break;
                 }
 
                 else {
-                    std::cout << "Invalid command: " << fnCommand << std::endl;
-                    std::cout << "Enter command: " << std::endl;
+                    std::cout << "\nInvalid command: " << fnCommand << std::endl;
+                    std::getline(std::cin, aux);
                 }
             }
         }
         
         else {
-            std::cout << "Invalid command: " << outerCommand << std::endl;
-            std::cout << "Enter command: " << std::endl;
+            std::cout << "\nInvalid command: " << outerCommand << std::endl;
+            std::getline(std::cin, aux);
         }
     }
 
     // display the final score 
-    std::cout << "Final score:" << std::endl;
+    std::cout << "\n\nFinal score:" << std::endl;
     std::cout << "White: " << whiteScore << std::endl;
     std::cout << "Black: " << blackScore << std::endl;
 }
