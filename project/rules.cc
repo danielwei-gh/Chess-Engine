@@ -695,3 +695,10 @@ bool Rules::stalemate(Colour c, const Board &board, const Move &previousMove)
     }
 }
 
+float Rules::evalMove(int level, Colour c, const Board &board, const Move &move, const Move &previousMove) {
+
+    if (level == 2) {
+        
+    }
+
+}

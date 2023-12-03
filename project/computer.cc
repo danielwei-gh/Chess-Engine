@@ -1,10 +1,6 @@
 #include "computer.h"
 #include "rules.h"
 
-float ComputerPlayer::evalMove(const Move &move, int level) const {
-    return 0;
-}
-
 ComputerPlayer::ComputerPlayer(Colour c, int level) : 
     Player{c}, difficultyLevel{level} {};
 
@@ -27,6 +23,11 @@ Move ComputerPlayer::makeMove(const Board &board, const Move &previousMove) {
         int moveNum = rand() % length;
         return moves[moveNum];
     }
+
+    for (auto i : moves) {
+
+    }
+
     return moves[0];
 }
 
