@@ -29,7 +29,7 @@ std::string King::getUnicodeSymbol() const {
 }
   
 int King::getValue() const {
-    return 200;
+    return 20000;
 }
 
 Queen::Queen(Colour c): Piece{c, PieceType::Queen} {}
@@ -43,7 +43,7 @@ std::string Queen::getUnicodeSymbol() const {
 }
 
 int Queen::getValue() const {
-    return 9;
+    return 900;
 }
 
 Bishop::Bishop(Colour c): Piece{c, PieceType::Bishop} {}
@@ -57,7 +57,7 @@ std::string Bishop::getUnicodeSymbol() const {
 }
 
 int Bishop::getValue() const {
-    return 3;
+    return 330;
 }
 
 Rook::Rook(Colour c): Piece{c, PieceType::Rook} {}
@@ -71,7 +71,7 @@ std::string Rook::getUnicodeSymbol() const {
 }
 
 int Rook::getValue() const {
-    return 5;
+    return 500;
 }
 
 Knight::Knight(Colour c): Piece{c, PieceType::Knight} {}
@@ -85,7 +85,7 @@ std::string Knight::getUnicodeSymbol() const {
 }
 
 int Knight::getValue() const {
-    return 3;
+    return 320;
 }
 
 Pawn::Pawn(Colour c): Piece{c, PieceType::Pawn} {}
@@ -99,7 +99,7 @@ std::string Pawn::getUnicodeSymbol() const {
 }
 
 int Pawn::getValue() const {
-    return 1;
+    return 100;
 }
 
 std::shared_ptr<Piece> generatePiece(Colour c, PieceType type) {

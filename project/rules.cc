@@ -772,7 +772,7 @@ bool Rules::stalemate(Colour c, const Board &board, const Move &previousMove)
     return true;
 }
 
-float Rules::evalMove(int level, Colour c, Board &board, const Move &move, const Move &previousMove) {
+int Rules::evalMove(int level, Colour c, Board &board, const Move &move, const Move &previousMove) {
     float val = 0;
     Colour op_col = (c == Colour::Black ? Colour::White : Colour::Black);
 
@@ -785,7 +785,7 @@ float Rules::evalMove(int level, Colour c, Board &board, const Move &move, const
         }
         board.placePiece(move.endPos.first, move.endPos.second, move.movedPiece);
         board.removePiece(move.startPos.first, move.startPos.second);
-        if (Rules::check(op_col, board, previousMove)) val += 0.5;
+        if (Rules::check(op_col, board, previousMove)) val += 50;
 
         // undoing the move
         board.placePiece(move.startPos.first, move.startPos.second, move.movedPiece);
@@ -807,7 +807,7 @@ float Rules::evalMove(int level, Colour c, Board &board, const Move &move, const
         board.placePiece(move.endPos.first, move.endPos.second, move.movedPiece);
         board.removePiece(move.startPos.first, move.startPos.second);
         // does check?
-        if (Rules::check(op_col, board, previousMove)) val += 0.5;
+        if (Rules::check(op_col, board, previousMove)) val += 50;
 
         bool isunderAttack = isUnderAttack(op_col, move.endPos, board, move);
 
