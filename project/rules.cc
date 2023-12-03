@@ -387,143 +387,6 @@ void Rules::addCastling(const std::pair<int, int> &start, const Board &board,
     addRightCastling(start, board, king, moves, previousMove);
 }
 
-void Rules::addSquarePosBetween(const std::pair<int, int> &start,
-    const std::pair<int, int> &end, std::vector<std::pair<int, int>> &posVec)
-{
-    int startRow = start.first, startCol = start.second;
-    int endRow = end.first, endCol = end.second;
-
-    // gets an increment value based on the value of endRow and startRow
-    int rowInc = endRow > startRow ? 1 : -1;
-
-    // gets an increment value based on the value of endCol and startCol
-    int colInc = endCol > startCol ? 1 : -1;
-
-    // if the two squares are on the same row
-    if (startRow == endRow) {
-        int currCol = startCol + colInc;
-
-        while (currCol != endCol) {
-            posVec.emplace_back(startRow, currCol);
-            currCol += colInc;
-        }
-    }
-    // if the two squares are on the same column
-    else if (startCol == endCol) {
-        int currRow = startRow + rowInc;
-        
-        while (currRow != endRow) {
-            posVec.emplace_back(currRow, startCol);
-            currRow += rowInc;
-        }
-    }
-    // if the two squares are on the same diagonal
-    else if (std::abs(endRow - startRow) == std::abs(endCol - startCol)) {
-        int currRow = startRow + rowInc;
-        int currCol = startCol + colInc;
-
-        while (currRow != endRow && currCol != endCol) {
-            posVec.emplace_back(currRow, currCol);
-            currRow += rowInc;
-            currCol += colInc;
-        }
-    }
-}
-
-bool Rules::checkmateHelper(const Board &board, const Move &previousMove,
-    const std::pair<int, int> &allyKingPos, const std::pair<int, int> &enemyKingPos,
-    const std::set<std::pair<int, int>> &allyPieces,
-    const std::set<std::pair<int, int>> &enemyPieces)
-{
-    // since Rules::checkmate is called only called after Rules::check
-    //  returns true, if the ally King has any legal moves on the board, 
-    //  return false
-    if (generateFullyLegalMoves(allyKingPos, board, previousMove).size() > 0)
-        return false;
-    
-    std::vector<std::pair<int, int>> attackers;
-        
-    for (auto &start : enemyPieces) {
-
-        // if the enemy piece is the enemy King, continue to the next enemy
-        //  piece (since the enemy King should never have a move to capture 
-        //  the ally King)
-        if (start == enemyKingPos)
-            continue;
-        
-        // generate all pseudo-legal moves for the enemy piece on the
-        //  square with position start
-        auto enemyPieceMoves = generatePseudoLegalMoves(start, board, previousMove);
-
-        for (auto &move : enemyPieceMoves) {
-            
-            // if the enemy piece has a move that can capture the ally
-            //  King, add the position of the enemy piece to attackers
-            if (move.endPos == allyKingPos) {
-                attackers.emplace_back(start.first, start.second);
-                break;
-            }
-        }
-    }
-
-    // if there is more than one enemy attacker to the ally King, return
-    //  false (since the ally King has no legal moves)
-    if (attackers.size() > 1)
-        return false;
-    
-    // gets the piece type of the only enemy attacker
-    PieceType attackerType = board.getSquare(
-        attackers[0].first, attackers[0].second).getPiece()->getType();
-
-    std::vector<std::pair<int, int>> squaresBetween;
-
-    // if the enemy attacker is a Queen, Bishop, or Rook, add all the 
-    //  position of squares between the ally King and the enemy attacker
-    //  into squaresBetween
-    if (attackerType == PieceType::Queen || 
-        attackerType == PieceType::Bishop ||
-        attackerType == PieceType::Rook)
-    {   
-        addSquarePosBetween(allyKingPos, attackers[0], squaresBetween);
-    }
-
-    for (auto &start : allyPieces) {
-
-        // if the ally piece is the ally King, continue to the next
-        //  ally piece
-        if (start == allyKingPos)
-            continue;
-        
-        auto allyPieceMoves = generateFullyLegalMoves(start, board, previousMove);
-
-        for (auto &move : allyPieceMoves) {
-            
-            // if the ally piece can capture the only enemy attacker,
-            //  return false
-            if (move.endPos == attackers[0])
-                return false;
-        }
-
-        // if the enemy attacker is a Queen, Bishop, or Rook
-        if (attackerType == PieceType::Queen ||
-            attackerType == PieceType::Bishop ||
-            attackerType == PieceType::Rook) 
-        {
-            for (auto &squarePos : squaresBetween) {
-                for (auto &move : allyPieceMoves) {
-                    
-                    // if the square between the ally King and the enemy
-                    //  attacker is attacked by the ally piece, return
-                    //  false (this means that the check can be blocked)
-                    if (squarePos == move.endPos)
-                        return false;
-                }
-            }
-        }
-    }
-    return true;
-}
-
 std::vector<Move> 
 Rules::generateFullyLegalMoves(const std::pair<int, int> &start, 
     const Board &board, const Move &previousMove)
@@ -646,23 +509,36 @@ bool Rules::check(Colour c, const Board &board, const Move &previousMove)
 
 bool Rules::checkmate(Colour c, const Board &board, const Move &previousMove)
 {
-    std::pair<int, int> whiteKingPos = board.getWhiteKingPos();
-    std::pair<int, int> blackKingPos = board.getBlackKingPos();
+    if (c == Colour::White) {
 
-    // gets a reference to the set of all positions of squares that have
-    //  white pieces
-    auto &whitePieces = board.getWhitePieces();
+        // gets a reference to the set of all positions of squares that have
+        //  white pieces
+        auto &whitePieces = board.getWhitePieces();
 
-    // gets a reference to the set of all positions of squares that have
-    //  black pieces
-    auto &blackPieces = board.getBlackPieces();
+        for (auto &start : whitePieces) {
+            
+            // if any white pieces has any legal moves, then the white King is
+            //  not in checkmate
+            if (generateFullyLegalMoves(start, board, previousMove).size() > 0)
+                return false;
+        }
+        return true;
+    }
+    else {
 
-    if (c == Colour::White)
-        return checkmateHelper(board, previousMove, whiteKingPos, blackKingPos,
-            whitePieces, blackPieces);
-    else
-        return checkmateHelper(board, previousMove, blackKingPos, whiteKingPos,
-            blackPieces, whitePieces);
+        // gets a reference to the set of all positions of squares that have
+        //  black pieces
+        auto &blackPieces = board.getBlackPieces();
+
+        for (auto &start : blackPieces) {
+            
+            // if any black pieces has any legal moves, then the black King is
+            //  not in checkmate
+            if (generateFullyLegalMoves(start, board, previousMove).size() > 0)
+                return false;
+        }
+        return true;
+    }
 }
 
 bool Rules::stalemate(Colour c, const Board &board, const Move &previousMove) 
