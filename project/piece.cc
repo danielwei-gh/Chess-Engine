@@ -27,6 +27,10 @@ char King::getSymbol() const {
 std::string King::getUnicodeSymbol() const {
     return getColour() == Colour::White ? "\u265a" : "\u2654";
 }
+  
+int King::getValue() const {
+    return 200;
+}
 
 Queen::Queen(Colour c): Piece{c, PieceType::Queen} {}
 
@@ -36,6 +40,10 @@ char Queen::getSymbol() const {
 
 std::string Queen::getUnicodeSymbol() const {
     return getColour() == Colour::White ? "\u265b" : "\u2655";
+}
+
+int Queen::getValue() const {
+    return 9;
 }
 
 Bishop::Bishop(Colour c): Piece{c, PieceType::Bishop} {}
@@ -48,6 +56,10 @@ std::string Bishop::getUnicodeSymbol() const {
     return getColour() == Colour::White ? "\u265d" : "\u2657";
 }
 
+int Bishop::getValue() const {
+    return 3;
+}
+
 Rook::Rook(Colour c): Piece{c, PieceType::Rook} {}
 
 char Rook::getSymbol() const {
@@ -56,6 +68,10 @@ char Rook::getSymbol() const {
 
 std::string Rook::getUnicodeSymbol() const {
     return getColour() == Colour::White ? "\u265c" : "\u2656";
+}
+
+int Rook::getValue() const {
+    return 5;
 }
 
 Knight::Knight(Colour c): Piece{c, PieceType::Knight} {}
@@ -68,6 +84,10 @@ std::string Knight::getUnicodeSymbol() const {
     return getColour() == Colour::White ? "\u265e" : "\u2658";
 }
 
+int Knight::getValue() const {
+    return 3;
+}
+
 Pawn::Pawn(Colour c): Piece{c, PieceType::Pawn} {}
 
 char Pawn::getSymbol() const {
@@ -76,6 +96,10 @@ char Pawn::getSymbol() const {
 
 std::string Pawn::getUnicodeSymbol() const {
     return getColour() == Colour::White ? "\u265f" : "\u2659";
+}
+
+int Pawn::getValue() const {
+    return 1;
 }
 
 std::shared_ptr<Piece> generatePiece(Colour c, PieceType type) {

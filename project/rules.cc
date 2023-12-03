@@ -695,3 +695,60 @@ bool Rules::stalemate(Colour c, const Board &board, const Move &previousMove)
     }
 }
 
+float Rules::evalMove(int level, Colour c, Board &board, const Move &move, const Move &previousMove) {
+    float val = 0;
+    Colour op_col = (c == Colour::Black ? Colour::White : Colour::Black);
+
+    if (level == 2) {
+
+        // simulating the move
+        if (move.capturedPiece != nullptr) {
+            val += move.capturedPiece->getValue();
+            board.removePiece(move.endPos.first, move.endPos.second);
+        }
+        board.placePiece(move.endPos.first, move.endPos.second, move.movedPiece);
+        board.removePiece(move.startPos.first, move.startPos.second);
+        if (Rules::check(op_col, board, previousMove)) val += 0.5;
+
+        // undoing the move
+        board.placePiece(move.startPos.first, move.startPos.second, move.movedPiece);
+        board.removePiece(move.endPos.first, move.endPos.second);
+        if (move.capturedPiece != nullptr) {
+            board.placePiece(move.endPos.first, move.endPos.second, move.capturedPiece);
+        }
+
+    } else if (level == 3) {
+
+        bool wasunderAttack = isUnderAttack(op_col, move.startPos, board, previousMove);
+
+        // simulating the move
+        if (move.capturedPiece != nullptr) {
+            // prefers check
+            val += move.capturedPiece->getValue();
+            board.removePiece(move.endPos.first, move.endPos.second);
+        }
+        board.placePiece(move.endPos.first, move.endPos.second, move.movedPiece);
+        board.removePiece(move.startPos.first, move.startPos.second);
+        // does check?
+        if (Rules::check(op_col, board, previousMove)) val += 0.5;
+
+        bool isunderAttack = isUnderAttack(op_col, move.endPos, board, move);
+
+        // avoiding check
+        if (wasunderAttack && !isunderAttack) {
+            val += move.movedPiece->getValue();
+        } else if (!wasunderAttack && isunderAttack) {
+            val -= move.movedPiece->getValue();
+        }
+
+        // undoing the move
+        board.placePiece(move.startPos.first, move.startPos.second, move.movedPiece);
+        board.removePiece(move.endPos.first, move.endPos.second);
+        if (move.capturedPiece != nullptr) {
+            board.placePiece(move.endPos.first, move.endPos.second, move.capturedPiece);
+        }
+
+    }
+
+    return val;
+}

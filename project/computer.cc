@@ -1,14 +1,12 @@
 #include "computer.h"
 #include "rules.h"
 
-float ComputerPlayer::evalMove(const Move &move, int level) const {
-    return 0;
-}
-
 ComputerPlayer::ComputerPlayer(Colour c, int level) : 
     Player{c}, difficultyLevel{level} {};
 
 Move ComputerPlayer::makeMove(const Board &board, const Move &previousMove) {
+
+    srand(time(nullptr));
 
     std::set<std::pair<int, int>> pieces;
     if (getColour() == Colour::White) {
@@ -27,13 +25,30 @@ Move ComputerPlayer::makeMove(const Board &board, const Move &previousMove) {
         int moveNum = rand() % length;
         return moves[moveNum];
     }
-    return moves[0];
+
+    Board tempboard{board};
+    std::vector<Move> bestMoves;
+    float val = -1;
+    for (auto i : moves) {
+        float curVal = Rules::evalMove(difficultyLevel, getColour(), tempboard, i, previousMove);
+        if (curVal > val) {
+            bestMoves.clear();
+            bestMoves.emplace_back(i);
+            val = curVal;
+        } else if (curVal == val) {
+            bestMoves.emplace_back(i);
+        }
+    }
+
+    length = bestMoves.size();
+    int moveNum = rand() % length;
+    return bestMoves[moveNum];
 }
 
 PieceType ComputerPlayer::promotionPiece() {
+    PieceType pt = PieceType::Queen;
     if (difficultyLevel == 1) {
-        PieceType pt = static_cast<PieceType>(rand() % static_cast<int>(PieceType::Knight) + static_cast<int>(PieceType::Queen));
-        std::cout << "PIECE" << static_cast<int>(pt) << std::endl;
+        pt = static_cast<PieceType>(rand() % static_cast<int>(PieceType::Knight) + static_cast<int>(PieceType::Queen));
     }
-    return PieceType::Queen;
+    return pt;
 }
