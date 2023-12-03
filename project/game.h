@@ -25,6 +25,9 @@ class Game {
 
     // returns the previous move made
     Move getPreviousMove() const;
+
+    // removes all the pieces on the board
+    void clearBoard();
 public:
     explicit Game(int size = 8);
 

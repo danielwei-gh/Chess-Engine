@@ -19,7 +19,6 @@ BoardDisplay::BoardDisplay(int size): boardSize{size},graphicsDisplay{700, 700} 
             }
         }
     }
-  //  graphicsDisplay.setFont();
     for(int i = 0; i < 8; ++i){
         char x = 'a' + i;
         std::string xaxis = std::string(1, x);
@@ -58,12 +57,13 @@ void BoardDisplay::update(Square &square) {
     }
 }
 
-std::ostream &operator<<(std::ostream &out, BoardDisplay &d) {
+std::ostream &operator<<(std::ostream &out, const BoardDisplay &d) {
+    out << "  abcdefgh\n" << std::endl;
     for (int i = 0; i < d.getBoardSize(); ++i) {
         out << d.getBoardSize() - i << " ";
         for (int j = 0; j < d.getBoardSize(); ++j)
             out << d.textDisplay[i][j];
-        out << std::endl;
+        out << " " << d.getBoardSize() - i << std::endl;
     }
     out << std::endl << "  abcdefgh";
     return out;
