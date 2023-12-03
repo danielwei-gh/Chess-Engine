@@ -14,6 +14,7 @@ public:
     virtual void update(Square &square) override;
     friend std::ostream &operator<<(std::ostream &out, BoardDisplay &d);
     void Display();
+    ~BoardDisplay();
 };
 
 #endif

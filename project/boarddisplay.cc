@@ -1,7 +1,7 @@
 #include "boarddisplay.h"
 #include "square.h"
 
-BoardDisplay::BoardDisplay(int size): boardSize{size},graphicsDisplay{2000, 2400} {
+BoardDisplay::BoardDisplay(int size): boardSize{size},graphicsDisplay{700, 700} {
     for (int i = 0; i < boardSize; ++i) {
         textDisplay.emplace_back(std::vector<char>{});
         for (int j = 0; j < boardSize; ++j) {
@@ -9,16 +9,29 @@ BoardDisplay::BoardDisplay(int size): boardSize{size},graphicsDisplay{2000, 2400
             textDisplay[i].emplace_back(c);
         }
     }
+    graphicsDisplay.fillRectangle(39, 39, 602, 602, Xwindow::Green);
     for(int i = 0; i < boardSize; ++i){
         for(int j = 0; j < boardSize; ++j){
-            if((8*i+j) % 2 == 0){
-                graphicsDisplay.fillRectangle(100+250*i, 300+250*j, 250, 250, Xwindow::White);
+            if((i+j) % 2 == 0){
+                graphicsDisplay.fillRectangle(40+75*i, 40+75*j, 75, 75, Xwindow::White);
             } else {
-                graphicsDisplay.fillRectangle(100+250*i, 300+250*j, 250, 250, Xwindow::Black);
+                graphicsDisplay.fillRectangle(40+75*i, 40+75*j, 75, 75, Xwindow::Green);
             }
         }
     }
     graphicsDisplay.setFont();
+    for(int i = 0; i < 8; ++i){
+        char x = 'a' + i;
+        std::string xaxis = std::string(1, x);
+        graphicsDisplay.drawString(78 + 75 * i, 30, xaxis);
+        graphicsDisplay.drawString(78 + 75 * i, 652, xaxis);
+    }
+    for(int i = 0; i < 8; ++i){
+        char x = '1'+ 7-i;
+        std::string yaxis = std::string(1, x);
+        graphicsDisplay.drawString(30, 78 + 75 * i, yaxis);
+        graphicsDisplay.drawString(649, 78 + 75 * i, yaxis);
+    }
 }
 
 int BoardDisplay::getBoardSize() const {
@@ -28,20 +41,20 @@ int BoardDisplay::getBoardSize() const {
 void BoardDisplay::update(Square &square) {
     int row = square.getRow(), col = square.getColumn();
     char symbol;
-    std::string ssymbol = "";
+    std::string dsymbol;
     if (square.getPiece()) {
-        symbol = square.getPiece()->getSymbol(); 
-        ssymbol = "" + symbol;
+        symbol = square.getPiece()->getSymbol();
+        dsymbol = std::string(1, symbol);
     }
     else {
         symbol = square.getColour() == Colour::White ? ' ' : '_';
     }
     textDisplay[row][col] = symbol;
-    if(ssymbol != "") graphicsDisplay.drawString(225 + 250 * row, 225 + 250 * col, ssymbol);
-    else if((8*row+col) % 2 == 0){
-        graphicsDisplay.fillRectangle(100+250*row, 300+250*col, 250, 250, Xwindow::White);
+    if(dsymbol != "") graphicsDisplay.drawString(78 + 75 * col, 78 + 75 * row, dsymbol);
+    else if((row+col) % 2 == 0){
+        graphicsDisplay.fillRectangle(40+75*col, 40+75*row, 75, 75, Xwindow::White);
     } else {
-        graphicsDisplay.fillRectangle(100+250*row, 300+250*col, 250, 250, Xwindow::Black);
+        graphicsDisplay.fillRectangle(40+75*col, 40+75*row, 75, 75, Xwindow::Green);
     }
 }
 
@@ -56,4 +69,7 @@ std::ostream &operator<<(std::ostream &out, BoardDisplay &d) {
     return out;
 }
 
+BoardDisplay::~BoardDisplay(){
+    
+}
 
