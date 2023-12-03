@@ -24,11 +24,23 @@ Move ComputerPlayer::makeMove(const Board &board, const Move &previousMove) {
         return moves[moveNum];
     }
 
+    Board tempboard{board};
+    std::vector<Move> bestMoves;
+    float val = -1;
     for (auto i : moves) {
-
+        float curVal = Rules::evalMove(difficultyLevel, getColour(), tempboard, i, previousMove);
+        if (curVal > val) {
+            bestMoves.clear();
+            bestMoves.emplace_back(i);
+            val = curVal;
+        } else if (curVal == val) {
+            bestMoves.emplace_back(i);
+        }
     }
 
-    return moves[0];
+    length = bestMoves.size();
+    int moveNum = rand() % length;
+    return moves[moveNum];
 }
 
 PieceType ComputerPlayer::promotionPiece() {
