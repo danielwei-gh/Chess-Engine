@@ -59,11 +59,12 @@ void BoardDisplay::update(Square &square) {
 }
 
 std::ostream &operator<<(std::ostream &out, const BoardDisplay &d) {
+    out << "  abcdefgh\n" << std::endl;
     for (int i = 0; i < d.getBoardSize(); ++i) {
         out << d.getBoardSize() - i << " ";
         for (int j = 0; j < d.getBoardSize(); ++j)
             out << d.textDisplay[i][j];
-        out << std::endl;
+        out << " " << d.getBoardSize() - i << std::endl;
     }
     out << std::endl << "  abcdefgh";
     return out;

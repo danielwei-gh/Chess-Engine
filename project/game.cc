@@ -32,30 +32,40 @@ void Game::start() {
             break;
 
         if (outerCommand == "game") {
-            std::string whitePlayer, blackPlayer;
-            std::cin >> whitePlayer >> blackPlayer;
+            std::string strWhitePlayer, strBlackPlayer;
+            std::cin >> strWhitePlayer >> strBlackPlayer;
 
-            if (whitePlayer == "human")
+            if (strWhitePlayer == "human")
                 player1 = std::make_unique<HumanPlayer>(Colour::White);
-            else if (whitePlayer == "computer[1]")
+            else if (strWhitePlayer == "computer[1]")
                 player1 = std::make_unique<ComputerPlayer>(Colour::White, 1);
-            else if (whitePlayer == "computer[2]")
+            else if (strWhitePlayer == "computer[2]")
                 player1 = std::make_unique<ComputerPlayer>(Colour::White, 2);
-            else if (whitePlayer == "computer[3]")
+            else if (strWhitePlayer == "computer[3]")
                 player1 = std::make_unique<ComputerPlayer>(Colour::White, 3);
-            else
+            else if (strWhitePlayer == "computer[4]")
                 player1 = std::make_unique<ComputerPlayer>(Colour::White, 4);
+            else {
+                std::cout << "\nInvalid argument: " << strWhitePlayer << std::endl;
+                std::getline(std::cin, aux);
+                continue;
+            }
             
-            if (blackPlayer == "human")
+            if (strBlackPlayer == "human")
                 player2 = std::make_unique<HumanPlayer>(Colour::Black);
-            else if (blackPlayer == "computer[1]")
+            else if (strBlackPlayer == "computer[1]")
                 player2 = std::make_unique<ComputerPlayer>(Colour::Black, 1);
-            else if (blackPlayer == "computer[2]")
+            else if (strBlackPlayer == "computer[2]")
                 player2 = std::make_unique<ComputerPlayer>(Colour::Black, 2);
-            else if (blackPlayer == "computer[3]")
+            else if (strBlackPlayer == "computer[3]")
                 player2 = std::make_unique<ComputerPlayer>(Colour::Black, 3);
-            else
+            else if (strBlackPlayer == "computer[4]")
                 player2 = std::make_unique<ComputerPlayer>(Colour::Black, 4);
+            else {
+                std::cout << "\nInvalid argument: " << strBlackPlayer << std::endl;
+                std::getline(std::cin, aux);
+                continue;
+            }
             
             // if setup mode has not been entered, initialized the board with
             //  all the needed pieces for a default chess game

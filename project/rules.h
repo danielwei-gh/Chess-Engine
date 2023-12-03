@@ -114,7 +114,12 @@ public:
     static bool checkmate(Colour c, const Board &board, const Move &previousMove);
 
     // returns true if there are no more legal moves for the player of Colour
-    //  c, otherwise returns false
+    //  c, otherwise returns false (also returns true if the board has one of
+    //  the following piece combinations: 
+    //  one white King and one black King;
+    //  one white King, one white Bishop/Knight, and one black King;
+    //  one white King, one black King, and one black Bishop/Knight;
+    //  one white King, one white Bishop/Knight, one black King, and one black Bishop/Knight)
     static bool stalemate(Colour c, const Board &board, const Move &previousMove);
 
     // returns a valuation for a move for a computer of colour c given level

@@ -667,32 +667,109 @@ bool Rules::checkmate(Colour c, const Board &board, const Move &previousMove)
 
 bool Rules::stalemate(Colour c, const Board &board, const Move &previousMove) 
 {
-    if (c == Colour::White) {
+    // gets a reference to the set of all positions of squares that have
+    //  white pieces
+    auto &whitePieces = board.getWhitePieces();
+    
+    // gets a reference to the set of all positions of squares that have
+    //  black pieces
+    auto &blackPieces = board.getBlackPieces();
 
-        // gets a reference to the set of all positions of squares that have
-        //  white pieces
-        auto &whitePieces = board.getWhitePieces();
+    // if the board has only one white piece and one black piece
+    if (whitePieces.size() == 1 && blackPieces.size() == 1)
+        return true;
+    
+    if (whitePieces.size() == 2 && blackPieces.size() == 1) {
+        std::pair<int, int> piecePos;
+        for (auto &start : whitePieces) {
+
+            // get the position of the only other white piece
+            if (start != board.getWhiteKingPos()) {
+                piecePos = start;
+                break;
+            }    
+        }
+        auto piece = board.getSquare(piecePos.first, piecePos.second).getPiece();
+
+        // if the only other white piece is a Bishop or a Knight
+        if (piece->getType() == PieceType::Bishop || 
+            piece->getType() == PieceType::Knight)
+        {
+            return true;
+        }
+    }
+
+    if (whitePieces.size() == 1 && blackPieces.size() == 2) {
+        std::pair<int, int> piecePos;
+        for (auto &start : blackPieces) {
+
+            // get the position of the only other black piece
+            if (start != board.getBlackKingPos()) {
+                piecePos = start;
+                break;
+            }    
+        }
+        auto piece = board.getSquare(piecePos.first, piecePos.second).getPiece();
+
+        // if the only other black piece is a Bishop or a Knight
+        if (piece->getType() == PieceType::Bishop || 
+            piece->getType() == PieceType::Knight)
+        {
+            return true;
+        }
+    }
+
+    if (whitePieces.size() == 2 && blackPieces.size() == 2) {
+        std::pair<int, int> whitePiecePos, blackPiecePos;
+        for (auto &start : whitePieces) {
+
+            // get the position of the only other white piece
+            if (start != board.getWhiteKingPos()) {
+                whitePiecePos = start;
+                break;
+            }    
+        }
+        for (auto &start : blackPieces) {
+
+            // get the position of the only other black piece
+            if (start != board.getBlackKingPos()) {
+                blackPiecePos = start;
+                break;
+            }    
+        }
+        auto whitePiece = 
+            board.getSquare(whitePiecePos.first, whitePiecePos.second).getPiece();
+        auto blackPiece = 
+            board.getSquare(blackPiecePos.first, blackPiecePos.second).getPiece();
+
+        // if the only other white piece is a Bishop or a Knight AND if the
+        //  only other black piece is a Bishop or a Knight
+        if ((whitePiece->getType() == PieceType::Bishop ||
+            whitePiece->getType() == PieceType::Knight) &&
+            (blackPiece->getType() == PieceType::Bishop ||
+            blackPiece->getType() == PieceType::Knight))
+        {
+            return true;
+        }
+    }
+
+    if (c == Colour::White) {
         for (auto &start : whitePieces) {
             
             // if the white player has any legal moves, return true
             if (generateFullyLegalMoves(start, board, previousMove).size() > 0)
                 return false;
         }
-        return true;
     }
     else {
-
-        // gets a reference to the set of all positions of squares that have
-        //  black pieces
-        auto &blackPieces = board.getBlackPieces();
         for (auto &start : blackPieces) {
             
             // if the black player has any legal moves, return true
             if (generateFullyLegalMoves(start, board, previousMove).size() > 0)
                 return false;
         }
-        return true;
     }
+    return true;
 }
 
 float Rules::evalMove(int level, Colour c, Board &board, const Move &move, const Move &previousMove) {
