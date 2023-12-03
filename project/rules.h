@@ -116,6 +116,9 @@ public:
     // returns true if there are no more legal moves for the player of Colour
     //  c, otherwise returns false
     static bool stalemate(Colour c, const Board &board, const Move &previousMove);
+
+    // returns a valuation for a move for a computer of colour c given level
+    static float evalMove(int level, Colour c, Board &board, const Move &move, const Move &previousMove);
 };
 
 #endif
