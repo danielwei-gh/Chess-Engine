@@ -6,6 +6,8 @@ ComputerPlayer::ComputerPlayer(Colour c, int level) :
 
 Move ComputerPlayer::makeMove(const Board &board, const Move &previousMove) {
 
+    srand(time(nullptr));
+
     std::set<std::pair<int, int>> pieces;
     if (getColour() == Colour::White) {
         pieces = board.getWhitePieces();
@@ -30,6 +32,7 @@ Move ComputerPlayer::makeMove(const Board &board, const Move &previousMove) {
     for (auto i : moves) {
         float curVal = Rules::evalMove(difficultyLevel, getColour(), tempboard, i, previousMove);
         if (curVal > val) {
+            std::cout << "AFSOIJAFIJOAJFNI:  " << curVal << std::endl;
             bestMoves.clear();
             bestMoves.emplace_back(i);
             val = curVal;
@@ -40,7 +43,7 @@ Move ComputerPlayer::makeMove(const Board &board, const Move &previousMove) {
 
     length = bestMoves.size();
     int moveNum = rand() % length;
-    return moves[moveNum];
+    return bestMoves[moveNum];
 }
 
 PieceType ComputerPlayer::promotionPiece() {
