@@ -717,6 +717,37 @@ float Rules::evalMove(int level, Colour c, Board &board, const Move &move, const
             board.placePiece(move.endPos.first, move.endPos.second, move.capturedPiece);
         }
 
+    } else if (level == 3) {
+
+        bool wasunderAttack = isUnderAttack(op_col, move.startPos, board, previousMove);
+
+        // simulating the move
+        if (move.capturedPiece != nullptr) {
+            // prefers check
+            val += move.capturedPiece->getValue();
+            board.removePiece(move.endPos.first, move.endPos.second);
+        }
+        board.placePiece(move.endPos.first, move.endPos.second, move.movedPiece);
+        board.removePiece(move.startPos.first, move.startPos.second);
+        // does check?
+        if (Rules::check(op_col, board, previousMove)) val += 0.5;
+
+        bool isunderAttack = isUnderAttack(op_col, move.endPos, board, move);
+
+        // avoiding check
+        if (wasunderAttack && !isunderAttack) {
+            val += move.movedPiece->getValue();
+        } else if (!wasunderAttack && isunderAttack) {
+            val -= move.movedPiece->getValue();
+        }
+
+        // undoing the move
+        board.placePiece(move.startPos.first, move.startPos.second, move.movedPiece);
+        board.removePiece(move.endPos.first, move.endPos.second);
+        if (move.capturedPiece != nullptr) {
+            board.placePiece(move.endPos.first, move.endPos.second, move.capturedPiece);
+        }
+
     }
 
     return val;
