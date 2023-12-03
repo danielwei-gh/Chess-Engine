@@ -32,7 +32,6 @@ Move ComputerPlayer::makeMove(const Board &board, const Move &previousMove) {
     for (auto i : moves) {
         float curVal = Rules::evalMove(difficultyLevel, getColour(), tempboard, i, previousMove);
         if (curVal > val) {
-            std::cout << "AFSOIJAFIJOAJFNI:  " << curVal << std::endl;
             bestMoves.clear();
             bestMoves.emplace_back(i);
             val = curVal;
@@ -47,9 +46,9 @@ Move ComputerPlayer::makeMove(const Board &board, const Move &previousMove) {
 }
 
 PieceType ComputerPlayer::promotionPiece() {
+    PieceType pt = PieceType::Queen;
     if (difficultyLevel == 1) {
-        PieceType pt = static_cast<PieceType>(rand() % static_cast<int>(PieceType::Knight) + static_cast<int>(PieceType::Queen));
-        std::cout << "PIECE" << static_cast<int>(pt) << std::endl;
+        pt = static_cast<PieceType>(rand() % static_cast<int>(PieceType::Knight) + static_cast<int>(PieceType::Queen));
     }
-    return PieceType::Queen;
+    return pt;
 }
