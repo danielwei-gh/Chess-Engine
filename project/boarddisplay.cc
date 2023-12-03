@@ -19,7 +19,6 @@ BoardDisplay::BoardDisplay(int size): boardSize{size},graphicsDisplay{700, 700} 
             }
         }
     }
-    graphicsDisplay.setFont();
     for(int i = 0; i < 8; ++i){
         char x = 'a' + i;
         std::string xaxis = std::string(1, x);
