@@ -137,7 +137,7 @@ const std::pair<int, int>& Board::getBlackKingPos() const {
     return blackKingPos;
 }
 
-std::ostream &operator<<(std::ostream &out, Board &b) {
+std::ostream &operator<<(std::ostream &out, const Board &b) {
     out << *b.display;
     return out;
 }

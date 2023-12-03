@@ -4,6 +4,13 @@ Move Game::getPreviousMove() const {
     return moveHistory.top();
 }
 
+void Game::clearBoard() {
+    for (int i = 0; i < board.getSize(); ++i) {
+        for (int j = 0; j < board.getSize(); ++j)
+            board.removePiece(i, j);
+    }
+}
+
 Game::Game(int size): board{size}, whiteScore{0.0}, blackScore{0.0} {
 
     // adds an default initialized move to moveHistory, used as a dummy object
@@ -215,9 +222,8 @@ void Game::start() {
                 }
             }
             
-            // reset the customSetup flag, should replace with a board cleanup
-            //  method later
-            customSetup = false;
+            // reset the board to an empty board
+            clearBoard();
         }
 
         else if (outerCommand == "setup") {

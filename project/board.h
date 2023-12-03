@@ -71,7 +71,7 @@ public:
     const std::pair<int, int> &getBlackKingPos() const;
 
     // forwards the output of the board from BoardDisplay
-    friend std::ostream &operator<<(std::ostream &out, Board &b);
+    friend std::ostream &operator<<(std::ostream &out, const Board &b);
 };
 
 #endif
