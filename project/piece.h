@@ -3,6 +3,7 @@
 #include "colour.h"
 #include <string>
 #include <memory>
+#include <vector>
 
 enum class PieceType { King, Queen, Bishop, Rook, Knight, Pawn };
 
@@ -10,6 +11,8 @@ class Piece {
     Colour colour;
     PieceType type;
     bool hasMoved = false;
+protected:
+    std::vector<std::vector<int>> boardVal;
 public:
     Piece(Colour c, PieceType pt);
 
@@ -29,6 +32,8 @@ public:
 
     // returns hasMoved
     bool isMoved() const;
+
+    int getboardVal(int row, int col) const;
 
     virtual ~Piece() = default;
 };
