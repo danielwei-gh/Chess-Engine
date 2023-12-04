@@ -13,8 +13,6 @@ public:
     int getBoardSize() const;
     virtual void update(Square &square) override;
     friend std::ostream &operator<<(std::ostream &out, const BoardDisplay &d);
-    void Display();
-    ~BoardDisplay();
 };
 
 #endif

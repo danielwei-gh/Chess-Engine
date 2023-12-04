@@ -68,8 +68,3 @@ std::ostream &operator<<(std::ostream &out, const BoardDisplay &d) {
     out << std::endl << "  abcdefgh";
     return out;
 }
-
-BoardDisplay::~BoardDisplay(){
-    
-}
-
