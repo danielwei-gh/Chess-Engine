@@ -773,7 +773,7 @@ bool Rules::stalemate(Colour c, const Board &board, const Move &previousMove)
 }
 
 int Rules::evalMove(int level, Colour c, Board &board, const Move &move, const Move &previousMove) {
-    float val = 0;
+    int val = 0;
     Colour op_col = (c == Colour::Black ? Colour::White : Colour::Black);
 
     if (level == 2) {
