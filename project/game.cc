@@ -239,6 +239,9 @@ void Game::start() {
             
             // reset the board to an empty board
             clearBoard();
+
+            // reset the setup mode flag
+            customSetup = false;
         }
 
         else if (outerCommand == "setup") {
