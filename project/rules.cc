@@ -825,6 +825,8 @@ int Rules::evalMove(int level, Colour c, Board &board, const Move &move, const M
             board.placePiece(move.endPos.first, move.endPos.second, move.capturedPiece);
         }
 
+    } else {
+        
     }
 
     return val;
