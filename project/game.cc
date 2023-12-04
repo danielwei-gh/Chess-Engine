@@ -242,6 +242,9 @@ void Game::start() {
 
             // reset the setup mode flag
             customSetup = false;
+
+            // reset the player who goes first to white
+            firstPlayerColour = Colour::White;
         }
 
         else if (outerCommand == "setup") {
