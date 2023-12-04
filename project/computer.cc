@@ -28,7 +28,7 @@ Move ComputerPlayer::makeMove(const Board &board, const Move &previousMove) {
 
     Board tempboard{board};
     std::vector<Move> bestMoves;
-    int val = -1;
+    int val = INT_MIN;
     for (auto i : moves) {
         int curVal = Rules::evalMove(difficultyLevel, getColour(), tempboard, i, previousMove);
         if (curVal > val) {
@@ -39,7 +39,7 @@ Move ComputerPlayer::makeMove(const Board &board, const Move &previousMove) {
             bestMoves.emplace_back(i);
         }
     }
-
+    
     length = bestMoves.size();
     int moveNum = rand() % length;
     return bestMoves[moveNum];
