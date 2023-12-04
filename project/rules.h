@@ -78,23 +78,6 @@ class Rules {
     static void addCastling(const std::pair<int, int> &start, 
                         const Board &board, std::shared_ptr<Piece> &king, 
                         std::vector<Move> &moves, const Move &previousMove);
-
-    // adds all position of squares between the square with position start
-    //  and the square with position end to posVec (the piece on the square
-    //  with position start must be King and the piece on the square with
-    //  position end must be either Queen, Bishop, or Rook)
-    static void addSquarePosBetween(const std::pair<int, int> &start,
-                        const std::pair<int, int> &end, 
-                        std::vector<std::pair<int, int>> &posVec);
-
-    // Rules::checkmateHelper is only called as a subprocedure of 
-    //  Rules::checkmate, ally and enemy both represent a colour, 
-    //  if ally is white then enemy is black and vice versa
-    static bool checkmateHelper(const Board &board, const Move &previousMove,
-                        const std::pair<int, int> &allyKingPos, 
-                        const std::pair<int, int> &enemyKingPos,
-                        const std::set<std::pair<int, int>> &allyPieces,
-                        const std::set<std::pair<int, int>> &enemyPieces);
     
 public:
 

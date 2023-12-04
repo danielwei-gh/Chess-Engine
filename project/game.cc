@@ -6,8 +6,13 @@ Move Game::getPreviousMove() const {
 
 void Game::clearBoard() {
     for (int i = 0; i < board.getSize(); ++i) {
-        for (int j = 0; j < board.getSize(); ++j)
-            board.removePiece(i, j);
+        for (int j = 0; j < board.getSize(); ++j) {
+
+            // if there is a piece on the square with position (i, j), remove
+            //  that piece
+            if (board.getSquare(i, j).getPiece())
+                board.removePiece(i, j);
+        }
     }
 }
 
@@ -432,8 +437,8 @@ void Game::start() {
                     if ((whiteKingPos.first == -1 && whiteKingPos.second == -1) ||
                         (blackKingPos.first == -1 && blackKingPos.second == -1))
                     {
-                        std::cout << "\nInvalid board setup. Continue to setup "
-                            "the board." << std::endl;
+                        std::cout << "\nInvalid board setup. White King or black King"
+                            " missing. Continue to setup the board." << std::endl;
                         std::getline(std::cin, aux);
                         continue;
                     }
@@ -470,8 +475,8 @@ void Game::start() {
                     //  board
                     if (firstOrLastRowPawn)
                     {
-                        std::cout << "\nInvalid board setup. Continue to setup "
-                            "the board." << std::endl;
+                        std::cout << "\nInvalid board setup. Pawns on the first "
+                            "or last row. Continue to setup the board." << std::endl;
                         std::getline(std::cin, aux);
                         continue;
                     }
@@ -479,8 +484,8 @@ void Game::start() {
                     // if the white King is in check
                     if (Rules::check(Colour::White, board, getPreviousMove()))
                     {
-                        std::cout << "\nInvalid board setup. Continue to setup "
-                            "the board." << std::endl;
+                        std::cout << "\nInvalid board setup. White King in check."
+                            " Continue to setup the board." << std::endl;
                         std::getline(std::cin, aux);
                         continue;
                     }
@@ -488,8 +493,20 @@ void Game::start() {
                     // if the black King is in check
                     if (Rules::check(Colour::Black, board, getPreviousMove()))
                     {
-                        std::cout << "\nInvalid board setup. Continue to setup "
-                            "the board." << std::endl;
+                        std::cout << "\nInvalid board setup. Black King in check."
+                            " Continue to setup the board." << std::endl;
+                        std::getline(std::cin, aux);
+                        continue;
+                    }
+
+                    // if the player who goes first is in stalemate or the
+                    //  board is in a "draw" state (the game will never end)
+                    if (Rules::stalemate(firstPlayerColour, board, getPreviousMove()))
+                    {
+                        std::cout << "\nInvalid board setup. "
+                            << (firstPlayerColour == Colour::White ? "White" : "Black")
+                            << " player stalemated or board in draw state. Continue to"
+                            " setup the board." << std::endl;
                         std::getline(std::cin, aux);
                         continue;
                     }
