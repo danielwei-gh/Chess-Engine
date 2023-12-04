@@ -33,6 +33,8 @@ public:
     // returns hasMoved
     bool isMoved() const;
 
+    int getboardVal(int row, int col) const;
+
     virtual ~Piece() = default;
 };
 

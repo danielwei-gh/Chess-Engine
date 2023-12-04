@@ -18,6 +18,8 @@ bool Piece::isMoved() const {
     return hasMoved;
 }
 
+int Piece::getboardVal(int row, int col) const { return boardVal[row][col]; }
+
 King::King(Colour c): Piece{c, PieceType::King} {
     if (c == Colour::White) {
         boardVal = {{-30,-40,-40,-50,-50,-40,-40,-30},

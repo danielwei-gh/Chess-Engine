@@ -826,7 +826,44 @@ int Rules::evalMove(int level, Colour c, Board &board, const Move &move, const M
         }
 
     } else {
-        
+        bool wasunderAttack = isUnderAttack(op_col, move.startPos, board, previousMove);
+
+        // simulating the move
+        if (move.capturedPiece != nullptr) {
+            // prefers check
+            val += move.capturedPiece->getValue();
+            board.removePiece(move.endPos.first, move.endPos.second);
+        }
+        board.placePiece(move.endPos.first, move.endPos.second, move.movedPiece);
+        board.removePiece(move.startPos.first, move.startPos.second);
+        // does check?
+        if (Rules::check(op_col, board, previousMove)) val += 50;
+
+        bool isunderAttack = isUnderAttack(op_col, move.endPos, board, move);
+
+        // avoiding check
+        if (wasunderAttack && !isunderAttack) {
+            val += move.movedPiece->getValue();
+        } else if (!wasunderAttack && isunderAttack) {
+            val -= move.movedPiece->getValue();
+        }
+
+        // undoing the move
+        board.placePiece(move.startPos.first, move.startPos.second, move.movedPiece);
+        board.removePiece(move.endPos.first, move.endPos.second);
+        if (move.capturedPiece != nullptr) {
+            board.placePiece(move.endPos.first, move.endPos.second, move.capturedPiece);
+        }
+
+        // positional advantage
+        int r1 = move.startPos.first;
+        int c1 = move.startPos.second;
+        int r2 = move.endPos.first;
+        int c2 = move.endPos.second;
+
+        val += move.movedPiece->getboardVal(r2, c2);
+        val -= move.movedPiece->getboardVal(r1, c1);
+
     }
 
     return val;
