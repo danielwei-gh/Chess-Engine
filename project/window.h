@@ -10,7 +10,7 @@ class Xwindow {
   int s;
   GC gc;
   unsigned long colours[10];
-  
+
  public:
   Xwindow(int width=500, int height=500);  // Constructor; displays the window.
   ~Xwindow();                              // Destructor; destroys the window.
@@ -20,9 +20,12 @@ class Xwindow {
   // Draws a rectangle
   void fillRectangle(int x, int y, int width, int height, int colour=Black);
 
+  void setUpFont(const std::string& fontname);
+
   // Draws a string
-  void drawString(int x, int y, std::string msg);
-  
+  void drawString(int x, int y, std::string msg, int colour, const std::string& fontName);
+
+
 };
 
 #endif
