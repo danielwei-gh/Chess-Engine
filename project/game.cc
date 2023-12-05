@@ -236,6 +236,10 @@ void Game::start() {
                     std::getline(std::cin, aux);
                 }
             }
+
+            // reset the move history
+            moveHistory = std::stack<Move>{};
+            moveHistory.emplace();
             
             // reset the board to an empty board
             clearBoard();
