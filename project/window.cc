@@ -65,19 +65,10 @@ void Xwindow::fillRectangle(int x, int y, int width, int height, int colour) {
   XSetForeground(d, gc, colours[Black]);
 }
 
-void Xwindow::setUpFont(const std::string& fontname) {
-    XFontStruct * font = XLoadQueryFont(d, fontname.c_str() );
-    if (! font ) {
-        cerr << "unable to load font " << fontname << ": using fixed" << endl;
-        font = XLoadQueryFont(d, "lucidasans-12");
-    }
-    XSetFont(d, gc, font->fid);
-} // Xwindow::setUpFont
-
-void Xwindow::drawString(int x, int y, std::string msg, int colour, const std::string& fontName) {
+void Xwindow::drawString(int x, int y, std::string msg, int colour) {
   unsigned long prevCol = colours[Black];
     XSetForeground(d, gc, colours[colour]);
-    setUpFont(fontName);
+   
     XDrawString(d, w, gc, x, y, msg.c_str(), msg.length());
     XSetForeground(d, gc, prevCol);
 }

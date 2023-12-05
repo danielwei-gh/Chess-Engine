@@ -20,10 +20,8 @@ class Xwindow {
   // Draws a rectangle
   void fillRectangle(int x, int y, int width, int height, int colour=Black);
 
-  void setUpFont(const std::string& fontname);
-
   // Draws a string
-  void drawString(int x, int y, std::string msg, int colour, const std::string& fontName);
+  void drawString(int x, int y, std::string msg, int colour);
 
 
 };

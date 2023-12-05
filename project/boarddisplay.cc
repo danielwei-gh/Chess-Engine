@@ -19,19 +19,20 @@ BoardDisplay::BoardDisplay(int size): boardSize{size},graphicsDisplay{700, 700} 
             }
         }
     }
-    std::string font = "-b&h-lucidatypewriter-bold-r-normal-sans-20-140-100-100-m-120-iso8859-10";
+    
     for(int i = 0; i < 8; ++i){
         char x = 'a' + i;
         std::string xaxis = std::string(1, x);
         
-        graphicsDisplay.drawString(78 + 75 * i, 26, xaxis, Xwindow::Black, font);
-        graphicsDisplay.drawString(78 + 75 * i, 652, xaxis, Xwindow::Black, font);
+        graphicsDisplay.drawString(78 + 75 * i, 26, xaxis, Xwindow::Black);
+        graphicsDisplay.drawString(78 + 75 * i, 655, xaxis, Xwindow::Black);
     }
+    
     for(int i = 0; i < 8; ++i){
         char x = '1'+ 7-i;
         std::string yaxis = std::string(1, x);
-        graphicsDisplay.drawString(26, 78 + 75 * i, yaxis, Xwindow::Black, font);
-        graphicsDisplay.drawString(649, 78 + 75 * i, yaxis, Xwindow::Black, font);
+        graphicsDisplay.drawString(26, 78 + 75 * i, yaxis, Xwindow::Black);
+        graphicsDisplay.drawString(649, 78 + 75 * i, yaxis, Xwindow::Black);
     }
 }
 
@@ -51,9 +52,9 @@ void BoardDisplay::update(Square &square) {
         symbol = square.getColour() == Colour::White ? ' ' : '_';
     }
     textDisplay[row][col] = symbol;
-    std::string font = "-b&h-lucidatypewriter-bold-r-normal-sans-20-140-100-100-m-120-iso8859-10";
-    if(dsymbol != "" && dsymbol[0] < 91) graphicsDisplay.drawString(76 + 75 * col, 80 + 75 * row, dsymbol, Xwindow::Blue, font);
-    else if(dsymbol != "" && dsymbol[0] > 96 ) graphicsDisplay.drawString(76 + 75 * col, 80 + 75 * row, dsymbol, Xwindow::Black, font);
+    
+    if(dsymbol != "" && dsymbol[0] < 91) graphicsDisplay.drawString(76 + 75 * col, 80 + 75 * row, dsymbol, Xwindow::Blue);
+    else if(dsymbol != "" && dsymbol[0] > 96 ) graphicsDisplay.drawString(76 + 75 * col, 80 + 75 * row, dsymbol, Xwindow::Black);
     else if((row+col) % 2 == 0){
         graphicsDisplay.fillRectangle(40+75*col, 40+75*row, 75, 75, Xwindow::White);
     } else {
