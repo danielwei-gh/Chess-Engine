@@ -197,6 +197,10 @@ Rules::generatePseudoLegalMoves(const std::pair<int, int> &start,
     int row = start.first, col = start.second;
     auto piece = board.getSquare(row, col).getPiece();
 
+    // if there is no piece on the square with position (row, col)
+    if (!piece)
+        return moves;
+
     if (piece->getType() == PieceType::King) {
         addPseudoLegalMove(start, {row - 1, col}, board, piece, moves);
         addPseudoLegalMove(start, {row + 1, col}, board, piece, moves);
