@@ -27,7 +27,7 @@ BoardDisplay::BoardDisplay(int size): boardSize{size},graphicsDisplay{700, 700} 
         graphicsDisplay.drawString(78 + 75 * i, 26, xaxis, Xwindow::Black);
         graphicsDisplay.drawString(78 + 75 * i, 655, xaxis, Xwindow::Black);
     }
-    
+
     for(int i = 0; i < 8; ++i){
         char x = '1'+ 7-i;
         std::string yaxis = std::string(1, x);
@@ -54,7 +54,7 @@ void BoardDisplay::update(Square &square) {
     textDisplay[row][col] = symbol;
     
     if(dsymbol != "" && dsymbol[0] < 91) graphicsDisplay.drawString(76 + 75 * col, 80 + 75 * row, dsymbol, Xwindow::Blue);
-    else if(dsymbol != "" && dsymbol[0] > 96 ) graphicsDisplay.drawString(76 + 75 * col, 80 + 75 * row, dsymbol, Xwindow::Black);
+    else if(dsymbol != "" && dsymbol[0] > 96 ) graphicsDisplay.drawString(76 + 75 * col, 80 + 75 * row, dsymbol, Xwindow::Red);
     else if((row+col) % 2 == 0){
         graphicsDisplay.fillRectangle(40+75*col, 40+75*row, 75, 75, Xwindow::White);
     } else {
